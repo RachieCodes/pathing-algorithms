@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Canvas Test</title>
+    <style>
+        body {
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        canvas {
+            border: 2px solid #333;
+            background-color: #f0f0f0;
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Canvas Debug Test</h1>
+    <button id="test-draw">Test Draw</button>
+    <button id="generate-maze">Generate Maze</button>
+    <br><br>
+    <canvas id="pathfinding-canvas" width="600" height="400"></canvas>
+    
+    <script>
+        class SimpleVisualizer {
+            constructor() {
+                console.log('Initializing SimpleVisualizer');
+                this.canvas = document.getElementById('pathfinding-canvas');
+                if (!this.canvas) {
+                    console.error('Canvas not found!');
+                    return;
+                }
+                
+                this.ctx = this.canvas.getContext('2d');
+                if (!this.ctx) {
+                    console.error('Canvas context not available!');
+                    return;
+                }
+                
+                this.gridWidth = 24;
+                this.gridHeight = 16;
+                this.cellSize = 25;
+                
+                // Initialize grid
+                this.initializeGrid();
+                this.setupEventListeners();
+                this.render();
+                
+                console.log('SimpleVisualizer initialized successfully');
+            }
+            
+            initializeGrid() {
+                this.grid = [];
+                for (let y = 0; y < this.gridHeight; y++) {
+                    this.grid[y] = [];
+                    for (let x = 0; x < this.gridWidth; x++) {
+                        this.grid[y][x] = {
+                            x: x,
+                            y: y,
+                            isObstacle: false
+                        };
+                    }
+                }
+            }
+            
+            setupEventListeners() {
+                document.getElementById('test-draw').addEventListener('click', () => {
+                    console.log('Test draw clicked');
+                    this.testDraw();
+                });
+                
+                document.getElementById('generate-maze').addEventListener('click', () => {
+                    console.log('Generate maze clicked');
+                    this.generateMaze();
+                });
+            }
+            
+            testDraw() {
+                this.ctx.fillStyle = '#ff0000';
+                this.ctx.fillRect(10, 10, 100, 100);
+                console.log('Drew red rectangle');
+            }
+            
+            generateMaze() {
+                console.log('Generating maze...');
+                
+                // Clear grid
+                for (let y = 0; y < this.gridHeight; y++) {
+                    for (let x = 0; x < this.gridWidth; x++) {
+                        this.grid[y][x].isObstacle = false;
+                    }
+                }
+                
+                // Add random obstacles
+                for (let y = 0; y < this.gridHeight; y++) {
+                    for (let x = 0; x < this.gridWidth; x++) {
+                        if (Math.random() < 0.3) {
+                            this.grid[y][x].isObstacle = true;
+                        }
+                    }
+                }
+                
+                console.log('Maze generated, rendering...');
+                this.render();
+            }
+            
+            render() {
+                console.log('Rendering...');
+                
+                // Clear canvas
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Draw grid
+                this.ctx.strokeStyle = '#ccc';
+                this.ctx.lineWidth = 1;
+                
+                for (let x = 0; x <= this.gridWidth; x++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(x * this.cellSize, 0);
+                    this.ctx.lineTo(x * this.cellSize, this.gridHeight * this.cellSize);
+                    this.ctx.stroke();
+                }
+                
+                for (let y = 0; y <= this.gridHeight; y++) {
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(0, y * this.cellSize);
+                    this.ctx.lineTo(this.gridWidth * this.cellSize, y * this.cellSize);
+                    this.ctx.stroke();
+                }
+                
+                // Draw cells
+                for (let y = 0; y < this.gridHeight; y++) {
+                    for (let x = 0; x < this.gridWidth; x++) {
+                        const cell = this.grid[y][x];
+                        const cellX = x * this.cellSize;
+                        const cellY = y * this.cellSize;
+                        
+                        if (cell.isObstacle) {
+                            this.ctx.fillStyle = '#333';
+                            this.ctx.fillRect(cellX + 1, cellY + 1, this.cellSize - 2, this.cellSize - 2);
+                        }
+                    }
+                }
+                
+                console.log('Rendering complete');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded, creating visualizer');
+            new SimpleVisualizer();
+        });
+    </script>
+</body>
+</html>

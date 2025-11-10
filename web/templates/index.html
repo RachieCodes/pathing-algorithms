@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pathfinding Algorithms Visualizer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Pathfinding Algorithms Visualizer</h1>
+            <p>Interactive comparison of pathfinding algorithms with real-time visualization</p>
+        </header>
+
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="control-group">
+                <label for="algorithm-select">Algorithm:</label>
+                <select id="algorithm-select" class="select">
+                    <option value="astar">A* (Optimal)</option>
+                    <option value="weighted_astar">Weighted A* (Fast)</option>
+                    <option value="dijkstra">Dijkstra (Uniform Cost)</option>
+                    <option value="theta_star">Theta* (Any-Angle)</option>
+                    <option value="jps">Jump Point Search (Optimized)</option>
+                    <option value="ida_star">IDA* (Memory Efficient)</option>
+                    <option value="rrt">RRT (Sampling-Based)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="grid-size">Grid Size:</label>
+                <select id="grid-size" class="select">
+                    <option value="15x10">15x10 (Small)</option>
+                    <option value="20x15">20x15 (Small-Medium)</option>
+                    <option value="30x20" selected>30x20 (Medium)</option>
+                    <option value="40x25">40x25 (Large)</option>
+                    <option value="50x30">50x30 (Extra Large)</option>
+                    <option value="25">25x25 (Square)</option>
+                    <option value="35">35x35 (Square Large)</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="edit-mode">Edit Mode:</label>
+                <select id="edit-mode" class="select">
+                    <option value="wall" selected>Add Walls</option>
+                    <option value="erase">Erase Walls</option>
+                    <option value="start">Place Start</option>
+                    <option value="goal">Place Goal</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="obstacle-density">Obstacle Density:</label>
+                <input type="range" id="obstacle-density" min="0" max="40" value="20" class="slider">
+                <span id="density-value">20%</span>
+            </div>
+
+            <div class="control-group">
+                <label for="animation-speed">Animation Speed:</label>
+                <input type="range" id="animation-speed" min="1" max="100" value="50" class="slider">
+                <span id="speed-value">50ms</span>
+            </div>
+
+            <div class="button-group">
+                <button id="generate-maze" class="btn btn-secondary">Random Maze</button>
+                <button id="clear-grid" class="btn btn-secondary">Clear Grid</button>
+                <button id="clear-path" class="btn btn-secondary">Clear Path</button>
+                <button id="run-algorithm" class="btn btn-primary">Run Algorithm</button>
+                <button id="compare-algorithms" class="btn btn-accent">Compare All</button>
+            </div>
+
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Visualization Area -->
+            <div class="visualization-area">
+                <div class="grid-container">
+                    <canvas id="pathfinding-canvas" width="600" height="600"></canvas>
+                    <div id="grid-overlay" class="grid-overlay"></div>
+                </div>
+                
+                <!-- Legend -->
+                <div class="legend">
+                    <h3>Legend</h3>
+                    <div class="legend-item">
+                        <div class="legend-color start"></div>
+                        <span>Start</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color goal"></div>
+                        <span>Goal</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color obstacle"></div>
+                        <span>Obstacle</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color visited"></div>
+                        <span>Visited</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color path"></div>
+                        <span>Final Path</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-color open"></div>
+                        <span>Open Set</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Algorithm Information -->
+            <div class="info-panel">
+                <div class="algorithm-info">
+                    <h3 id="algorithm-title">A* Algorithm</h3>
+                    <div id="algorithm-description" class="algorithm-description">
+                        Best-first search using heuristics for optimal pathfinding. 
+                        Guarantees shortest path with admissible heuristic.
+                    </div>
+                    
+                    <div class="algorithm-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Time Complexity:</span>
+                            <span id="time-complexity">O(b^d)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Space Complexity:</span>
+                            <span id="space-complexity">O(b^d)</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Optimality:</span>
+                            <span id="optimality">Optimal</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Completeness:</span>
+                            <span id="completeness">Complete</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="performance-metrics">
+                    <h3>Performance Metrics</h3>
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <span class="metric-label">Execution Time:</span>
+                            <span id="execution-time">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Path Length:</span>
+                            <span id="path-length">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Nodes Expanded:</span>
+                            <span id="nodes-expanded">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Nodes Visited:</span>
+                            <span id="nodes-visited">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Memory Usage:</span>
+                            <span id="memory-usage">-</span>
+                        </div>
+                        <div class="metric">
+                            <span class="metric-label">Success Rate:</span>
+                            <span id="success-rate">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comparison Chart -->
+                <div class="comparison-chart">
+                    <h3>Algorithm Comparison</h3>
+                    <canvas id="comparison-chart" width="400" height="250"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Comparison Modal -->
+        <div id="comparison-modal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Algorithm Comparison Results</h2>
+                    <button id="close-modal" class="close-btn">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="comparison-results">
+                        <table id="comparison-table" class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>Algorithm</th>
+                                    <th>Time (ms)</th>
+                                    <th>Path Length</th>
+                                    <th>Nodes Expanded</th>
+                                    <th>Success</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody id="comparison-table-body">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="comparison-charts">
+                        <canvas id="performance-chart" width="600" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="instructions">
+            <h3>How to Use</h3>
+            <ol>
+                <li><strong>Select Algorithm:</strong> Choose from classical, optimized, or sampling-based algorithms</li>
+                <li><strong>Configure Grid:</strong> Adjust size, obstacle density, and animation speed</li>
+                <li><strong>Set Start/Goal:</strong> Click on the grid to place start (green) and goal (red) points</li>
+                <li><strong>Add Obstacles:</strong> Click and drag to draw obstacles (black squares)</li>
+                <li><strong>Run Algorithm:</strong> Click "Run Algorithm" to see the pathfinding in action</li>
+                <li><strong>Compare Algorithms:</strong> Use "Compare All" to see performance differences</li>
+            </ol>
+            
+            <div class="tips">
+                <h4>Tips</h4>
+                <ul>
+                    <li><strong>A*</strong> is great for general-purpose pathfinding</li>
+                    <li><strong>Jump Point Search</strong> is much faster on open grids</li>
+                    <li><strong>Theta*</strong> produces smoother, more natural paths</li>
+                    <li><strong>Weighted A*</strong> trades optimality for speed</li>
+                    <li><strong>RRT</strong> excels in complex obstacle environments</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
