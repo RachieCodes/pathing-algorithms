@@ -20,13 +20,45 @@
             <div class="control-group">
                 <label for="algorithm-select">Algorithm:</label>
                 <select id="algorithm-select" class="select">
-                    <option value="astar">A* (Optimal)</option>
-                    <option value="weighted_astar">Weighted A* (Fast)</option>
-                    <option value="dijkstra">Dijkstra (Uniform Cost)</option>
-                    <option value="theta_star">Theta* (Any-Angle)</option>
-                    <option value="jps">Jump Point Search (Optimized)</option>
-                    <option value="ida_star">IDA* (Memory Efficient)</option>
-                    <option value="rrt">RRT (Sampling-Based)</option>
+                    <!-- Basic Algorithms -->
+                    <optgroup label="Basic Algorithms">
+                        <option value="astar">A* (Optimal)</option>
+                        <option value="weighted_astar">Weighted A* (Fast)</option>
+                        <option value="dijkstra">Dijkstra (Uniform Cost)</option>
+                        <option value="bfs">Breadth-First Search</option>
+                        <option value="dfs">Depth-First Search</option>
+                    </optgroup>
+                    
+                    <!-- Advanced Algorithms -->
+                    <optgroup label="Advanced Algorithms">
+                        <option value="theta_star">Theta* (Any-Angle)</option>
+                        <option value="jps">Jump Point Search (Optimized)</option>
+                        <option value="ida_star">IDA* (Memory Efficient)</option>
+                        <option value="rrt">RRT (Sampling-Based)</option>
+                        <option value="lpa_star">LPA* (Lifelong Planning)</option>
+                    </optgroup>
+                    
+                    <!-- D* Algorithm Family -->
+                    <optgroup label="D* Algorithm Family">
+                        <option value="d_star_lite">D*-Lite (Dynamic)</option>
+                        <option value="field_d_star">Field D* (Interpolated)</option>
+                        <option value="mtd_star_lite">MTD*-Lite (Multi-Target)</option>
+                        <option value="anytime_d_star">Anytime D* (Bounded Suboptimal)</option>
+                    </optgroup>
+                    
+                    <!-- Hierarchical Algorithms -->
+                    <optgroup label="Hierarchical Algorithms">
+                        <option value="hpa_star">HPA* (Hierarchical Path-Finding)</option>
+                        <option value="pra_star">PRA* (Partial Refinement)</option>
+                        <option value="haa_star">HAA* (Hierarchical Annotated)</option>
+                    </optgroup>
+                    
+                    <!-- Other Advanced -->
+                    <optgroup label="Other Advanced">
+                        <option value="incremental_phi_star">Incremental Phi*</option>
+                        <option value="gaa_star">GAA* (Generalized Adaptive)</option>
+                        <option value="anytime_a_star">Anytime A*</option>
+                    </optgroup>
                 </select>
             </div>
 
