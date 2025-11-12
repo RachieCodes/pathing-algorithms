@@ -264,7 +264,7 @@ Remember: the "best" pathfinding algorithm is the one that best solves YOUR spec
 
 ## Getting Started Right Now
 
-1. **Visit the live demo**: [https://rachiecodes.github.io/pathing-algorithms/](https://rachiecodes.github.io/pathing-algorithms/)
+1. **Visit the live demo**: [https://rachiecodes.github.io/pathing-algorithms/](https://www.rachiecodes.com/pathing-algorithms/)
 2. **Draw some obstacles** and **watch A* work**
 3. **Try different algorithms** and see how they compare
 4. **Use "Compare All"** to see all algorithms race against each other
