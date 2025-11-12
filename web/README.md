@@ -1,6 +1,8 @@
-# Pathfinding Algorithm Visualizer - Web Interface
+# Pathfinding Algorithm Visualizer - Web Assets
 
-An interactive web-based tool for visualizing and comparing different pathfinding algorithms.
+This directory contains the static assets (CSS, JavaScript, images) used by the pathfinding visualizer.
+
+**Note**: The main HTML file is now at the root level (`/index.html`) for GitHub Pages deployment. This directory contains the supporting files.
 
 ## Features
 

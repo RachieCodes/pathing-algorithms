@@ -829,9 +829,7 @@ class PathfindingVisualizer {
     
     async runThetaStar() {
         // Theta* with line-of-sight optimization for any-angle pathfinding
-        console.log('Starting Theta* algorithm with line-of-sight optimization');
-        console.log(`Start: (${this.startNode.x}, ${this.startNode.y}), Goal: (${this.goalNode.x}, ${this.goalNode.y})`);
-        
+
         const openSet = [];
         const closedSet = [];
         
@@ -842,13 +840,12 @@ class PathfindingVisualizer {
         startNode.parent = null;
         
         openSet.push(startNode);
-        console.log('Theta*: Initial setup complete, starting main loop');
-        
+
         let iterations = 0;
         while (openSet.length > 0 && this.isRunning && !this.isPaused) {
             iterations++;
             if (iterations % 50 === 0) {
-                console.log(`Theta*: Iteration ${iterations}, open set size: ${openSet.length}`);
+
             }
             
             openSet.sort((a, b) => a.fCost - b.fCost);
@@ -861,7 +858,7 @@ class PathfindingVisualizer {
             
             // Check if we reached the goal
             if (currentNode.x === this.goalNode.x && currentNode.y === this.goalNode.y) {
-                console.log(`Theta*: Path found in ${iterations} iterations!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -913,8 +910,7 @@ class PathfindingVisualizer {
             this.updateRealTimeMetrics();
             await this.sleep(this.animationSpeed);
         }
-        
-        console.log('Theta*: No solution found');
+
     }
     
     async idaStarDFS(node, g, threshold, path) {
@@ -982,8 +978,7 @@ class PathfindingVisualizer {
     async runJumpPointSearch() {
         // Enhanced JPS implementation with line-of-sight optimization
         // Combines jump point pruning with any-angle pathfinding
-        console.log('Starting JPS with line-of-sight optimization');
-        
+
         const openSet = [];
         const closedSet = [];
         
@@ -1008,16 +1003,13 @@ class PathfindingVisualizer {
             closedSet.push(currentNode);
             
             if (currentNode.x === this.goalNode.x && currentNode.y === this.goalNode.y) {
-                console.log(`JPS: Path found in ${iterations} iterations with ${lineOfSightOptimizations} line-of-sight optimizations!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
             
             // Find jump points instead of all neighbors
             const jumpPoints = this.findJumpPoints(currentNode);
-            if (iterations % 10 === 0 && jumpPoints.length > 0) {
-                console.log(`JPS: Found ${jumpPoints.length} jump points from (${currentNode.x}, ${currentNode.y})`);
-            }
             
             for (const jumpPoint of jumpPoints) {
                 if (jumpPoint.isObstacle) continue;
@@ -1065,20 +1057,17 @@ class PathfindingVisualizer {
             this.updateRealTimeMetrics();
             await this.sleep(this.animationSpeed);
         }
-        
-        console.log(`JPS: No solution found after ${iterations} iterations with ${lineOfSightOptimizations} line-of-sight optimizations`);
+
     }
     
     async runIDAStar() {
         // IDA* - Iterative Deepening A* (proper implementation)
-        console.log('Starting IDA* algorithm');
-        
+
         const startNode = this.grid[this.startNode.y][this.startNode.x];
         let threshold = this.calculateHeuristic(startNode, this.grid[this.goalNode.y][this.goalNode.x]);
         
         while (this.isRunning && !this.isPaused) {
-            console.log(`IDA*: Searching with threshold ${threshold}`);
-            
+
             // Clear visited state for each iteration
             this.clearVisitedNodes();
             this.visitedNodes = [];
@@ -1086,12 +1075,12 @@ class PathfindingVisualizer {
             const result = await this.idaStarDFS(startNode, 0, threshold, []);
             
             if (result.found) {
-                console.log('IDA*: Path found!');
+
                 return;
             }
             
             if (result.minExceeded === Infinity) {
-                console.log('IDA*: No solution exists');
+
                 break;
             }
             
@@ -1117,8 +1106,7 @@ class PathfindingVisualizer {
     
     async runRRT() {
         // Rapidly-exploring Random Tree - Fixed implementation
-        console.log('Starting RRT algorithm');
-        
+
         const tree = [];
         const startNode = this.grid[this.startNode.y][this.startNode.x];
         startNode.isVisited = true;
@@ -1153,7 +1141,7 @@ class PathfindingVisualizer {
                     
                     // Check if we reached the goal
                     if (newNode.x === this.goalNode.x && newNode.y === this.goalNode.y) {
-                        console.log('RRT: Path found!');
+
                         this.reconstructPath(newNode);
                         return;
                     }
@@ -1162,7 +1150,7 @@ class PathfindingVisualizer {
                     const distanceToGoal = this.calculateDistance(newNode, this.grid[this.goalNode.y][this.goalNode.x]);
                     if (distanceToGoal <= stepSize && this.isPathClear(newNode, this.grid[this.goalNode.y][this.goalNode.x])) {
                         this.grid[this.goalNode.y][this.goalNode.x].parent = newNode;
-                        console.log('RRT: Connected to goal!');
+
                         this.reconstructPath(this.grid[this.goalNode.y][this.goalNode.x]);
                         return;
                     }
@@ -1176,12 +1164,10 @@ class PathfindingVisualizer {
                 await this.sleep(this.animationSpeed);
             }
         }
-        
-        console.log('RRT: Maximum iterations reached - no path found');
+
     }
     
     async runLPAStar() {
-        console.log('Starting LPA* (Lifelong Planning A*) algorithm...');
         this.clearVisualization();
         
         // LPA* explanation: Forward search like A* but with incremental capabilities
@@ -1229,7 +1215,7 @@ class PathfindingVisualizer {
             
             // Goal reached
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`LPA*: Path found in ${iterations} iterations!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -1273,9 +1259,9 @@ class PathfindingVisualizer {
         }
         
         if (iterations >= maxIterations) {
-            console.log('LPA*: Maximum iterations reached');
+
         } else {
-            console.log('LPA*: No path found');
+
         }
     }
     
@@ -1369,17 +1355,15 @@ class PathfindingVisualizer {
             
             // Safety check to prevent infinite loops
             if (path.length > this.gridWidth * this.gridHeight) {
-                console.log('LPA*: Path reconstruction safety limit reached');
+
                 break;
             }
         }
         
         this.pathLength = this.calculatePathLength(path);
-        console.log(`LPA*: Path length: ${this.pathLength.toFixed(2)} with ${path.length} nodes`);
     }
     
     async runDStarLite() {
-        console.log('Starting D*-Lite (Dynamic A*) algorithm...');
         this.clearVisualization();
         
         // D*-Lite simplified: Forward search with dynamic replanning capabilities
@@ -1428,7 +1412,7 @@ class PathfindingVisualizer {
             
             // Goal reached
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`D*-Lite: Path found in ${iterations} iterations with ${dynamicUpdates} dynamic updates!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -1436,7 +1420,7 @@ class PathfindingVisualizer {
             // Simulate dynamic environment changes (occasionally)
             if (iterations % 50 === 0 && Math.random() < 0.1) {
                 dynamicUpdates++;
-                console.log(`D*-Lite: Simulating environment change ${dynamicUpdates}`);
+
             }
             
             // Process neighbors
@@ -1478,9 +1462,9 @@ class PathfindingVisualizer {
         }
         
         if (iterations >= maxIterations) {
-            console.log('D*-Lite: Maximum iterations reached');
+
         } else {
-            console.log('D*-Lite: No path found');
+
         }
     }
     
@@ -1510,7 +1494,6 @@ class PathfindingVisualizer {
     }
     
     async runFieldDStar() {
-        console.log('Starting Field D* (Any-Angle Dynamic) algorithm...');
         this.clearVisualization();
         
         // Field D* combines D*-Lite with any-angle pathfinding like Theta*
@@ -1561,7 +1544,7 @@ class PathfindingVisualizer {
             
             // Goal reached
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`Field D*: Path found in ${iterations} iterations with ${anyAngleOptimizations} any-angle optimizations!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -1616,9 +1599,9 @@ class PathfindingVisualizer {
         }
         
         if (iterations >= maxIterations) {
-            console.log('Field D*: Maximum iterations reached');
+
         } else {
-            console.log('Field D*: No path found');
+
         }
     }
     
@@ -1649,7 +1632,6 @@ class PathfindingVisualizer {
     }
     
     async runAnytimeAStar() {
-        console.log('Starting Anytime A* (Interruptible) algorithm...');
         this.clearVisualization();
         
         const startNode = this.grid[this.startNode.y][this.startNode.x];
@@ -1665,7 +1647,6 @@ class PathfindingVisualizer {
         
         while (epsilon >= minEpsilon && this.isRunning && !this.isPaused) {
             iteration++;
-            console.log(`Anytime A*: Iteration ${iteration}, epsilon = ${epsilon.toFixed(2)}`);
             
             // Clear previous search state but keep best path visible
             this.clearSearchState();
@@ -1678,7 +1659,6 @@ class PathfindingVisualizer {
                 
                 // Visualize improved path
                 this.visualizeAnytimePath(result.path);
-                console.log(`Anytime A*: Found improved path with cost ${bestCost.toFixed(2)} (epsilon=${epsilon.toFixed(2)})`);
                 
                 // Allow user to see the improvement
                 await this.sleep(this.animationSpeed * 10);
@@ -1687,16 +1667,14 @@ class PathfindingVisualizer {
             epsilon = Math.max(minEpsilon, epsilon * epsilonDecay);
             
             if (epsilon <= minEpsilon) {
-                console.log(`Anytime A*: Final optimal path found with cost ${bestCost.toFixed(2)}`);
                 break;
             }
         }
         
         if (bestPath) {
             this.pathLength = this.calculatePathLength(bestPath);
-            console.log(`Anytime A*: Best path length: ${this.pathLength.toFixed(2)}`);
         } else {
-            console.log('Anytime A*: No path found');
+
         }
     }
     
@@ -1808,7 +1786,6 @@ class PathfindingVisualizer {
     }
     
     async runIncrementalPhiStar() {
-        console.log('Starting Incremental Phi* (Any-Angle Incremental) algorithm...');
         this.clearVisualization();
         
         // Incremental Phi* combines Theta*-style any-angle pathfinding with incremental capabilities
@@ -1860,7 +1837,7 @@ class PathfindingVisualizer {
             
             // Goal reached
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`Incremental Phi*: Path found in ${iterations} iterations with ${anyAngleOptimizations} any-angle optimizations and ${incrementalUpdates} incremental updates!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -1868,7 +1845,7 @@ class PathfindingVisualizer {
             // Simulate incremental updates (occasionally)
             if (iterations % 30 === 0 && Math.random() < 0.15) {
                 incrementalUpdates++;
-                console.log(`Incremental Phi*: Simulating incremental update ${incrementalUpdates}`);
+
             }
             
             // Process neighbors with any-angle pathfinding (like Theta*)
@@ -1921,9 +1898,9 @@ class PathfindingVisualizer {
         }
         
         if (iterations >= maxIterations) {
-            console.log('Incremental Phi*: Maximum iterations reached');
+
         } else {
-            console.log('Incremental Phi*: No path found');
+
         }
     }
     
@@ -1954,7 +1931,6 @@ class PathfindingVisualizer {
     }
     
     async runGAAStar() {
-        console.log('Starting GAA* (Generalized Adaptive A*) algorithm...');
         this.clearVisualization();
         
         const startNode = this.grid[this.startNode.y][this.startNode.x];
@@ -1981,7 +1957,6 @@ class PathfindingVisualizer {
                 if (validNeighbors.length > 0) {
                     const newGoal = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
                     if (newGoal !== goalNode) {
-                        console.log(`GAA*: Goal moved from (${goalNode.x}, ${goalNode.y}) to (${newGoal.x}, ${newGoal.y})`);
                         goalNode = newGoal;
                         this.goalNode.x = newGoal.x;
                         this.goalNode.y = newGoal.y;
@@ -2004,7 +1979,7 @@ class PathfindingVisualizer {
             closedSet.push(currentNode);
             
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`GAA*: Path found in ${iterations} iterations with ${goalMoves} goal moves!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -2034,12 +2009,10 @@ class PathfindingVisualizer {
                 await this.sleep(this.animationSpeed);
             }
         }
-        
-        console.log('GAA*: No path found');
+
     }
     
     async runGRFAStar() {
-        console.log('Starting GRFA* (Generalized Fringe-Retrieving A*) algorithm...');
         this.clearVisualization();
         
         const startNode = this.grid[this.startNode.y][this.startNode.x];
@@ -2068,7 +2041,7 @@ class PathfindingVisualizer {
             closedSet.push(currentNode);
             
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`GRFA*: Path found in ${iterations} iterations with ${fringeRetrievals} fringe retrievals!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -2113,12 +2086,10 @@ class PathfindingVisualizer {
                 await this.sleep(this.animationSpeed);
             }
         }
-        
-        console.log('GRFA*: No path found');
+
     }
     
     async runMTDStarLite() {
-        console.log('Starting MTD*-Lite (Moving Target D*-Lite) algorithm...');
         this.clearVisualization();
         
         // MTD*-Lite: Forward search with moving target simulation
@@ -2163,7 +2134,6 @@ class PathfindingVisualizer {
                 if (validNeighbors.length > 0) {
                     const newGoal = validNeighbors[Math.floor(Math.random() * validNeighbors.length)];
                     if (newGoal !== currentGoalNode) {
-                        console.log(`MTD*-Lite: Target moved from (${currentGoalNode.x}, ${currentGoalNode.y}) to (${newGoal.x}, ${newGoal.y})`);
                         
                         // Update goal position and replan
                         currentGoalNode = newGoal;
@@ -2205,7 +2175,7 @@ class PathfindingVisualizer {
             
             // Goal reached (current goal position)
             if (currentNode.x === currentGoalNode.x && currentNode.y === currentGoalNode.y) {
-                console.log(`MTD*-Lite: Path found in ${iterations} iterations with ${targetMoves} target moves and ${replans} replans!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -2246,9 +2216,9 @@ class PathfindingVisualizer {
         }
         
         if (iterations >= maxIterations) {
-            console.log('MTD*-Lite: Maximum iterations reached');
+
         } else {
-            console.log('MTD*-Lite: No path found');
+
         }
     }
     
@@ -2291,11 +2261,9 @@ class PathfindingVisualizer {
         this.path = path;
         this.finalPath = [...path];
         this.pathLength = this.calculatePathLength(path);
-        console.log(`MTD*-Lite: Path length: ${this.pathLength.toFixed(2)}, nodes: ${path.length}`);
     }
     
     async runTreeAAStar() {
-        console.log('Starting Tree-AA* (Unknown Terrain Adaptive A*) algorithm...');
         this.clearVisualization();
         
         const startNode = this.grid[this.startNode.y][this.startNode.x];
@@ -2346,7 +2314,7 @@ class PathfindingVisualizer {
             }
             
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`Tree-AA*: Path found in ${iterations} iterations with ${terrainDiscoveries} terrain discoveries!`);
+
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -2384,8 +2352,7 @@ class PathfindingVisualizer {
                 await this.sleep(this.animationSpeed);
             }
         }
-        
-        console.log('Tree-AA*: No path found');
+
     }
     
     isAdjacentToExplored(node, exploredNodes) {
@@ -2397,7 +2364,6 @@ class PathfindingVisualizer {
     }
     
     async runAnytimeDStar() {
-        console.log('Starting Anytime D* (Dynamic Anytime) algorithm...');
         this.clearVisualization();
         
         const startNode = this.grid[this.startNode.y][this.startNode.x];
@@ -2414,7 +2380,6 @@ class PathfindingVisualizer {
         
         while (epsilon >= minEpsilon && iteration < maxAnytimeIterations && this.isRunning && !this.isPaused) {
             iteration++;
-            console.log(`Anytime D*: Iteration ${iteration}/${maxAnytimeIterations}, epsilon = ${epsilon.toFixed(2)}`);
             
             // Forward search approach like other fixed D* algorithms
             for (let y = 0; y < this.gridHeight; y++) {
@@ -2445,29 +2410,23 @@ class PathfindingVisualizer {
                 bestCost = result.cost;
                 
                 this.visualizeAnytimePath(result.path);
-                console.log(`Anytime D*: Found improved path with cost ${bestCost.toFixed(2)} (epsilon=${epsilon.toFixed(2)})`);
                 
                 await this.sleep(this.animationSpeed * 4);
-            } else if (result) {
-                console.log(`Anytime D*: Path found but not better than current best (cost: ${result.cost.toFixed(2)})`);
-            } else {
-                console.log(`Anytime D*: No path found for epsilon ${epsilon.toFixed(2)}`);
-            }
+            }   
             
             epsilon = Math.max(minEpsilon, epsilon * epsilonDecay);
             
             // Early termination if we found optimal path
             if (epsilon <= minEpsilon) {
-                console.log('Anytime D*: Reached optimal epsilon, terminating');
+
                 break;
             }
         }
         
         if (bestPath) {
             this.pathLength = this.calculatePathLength(bestPath);
-            console.log(`Anytime D*: Final path cost: ${bestCost.toFixed(2)} in ${iteration} iterations`);
         } else {
-            console.log('Anytime D*: No path found');
+
         }
     }
     
@@ -2497,7 +2456,6 @@ class PathfindingVisualizer {
             
             // Goal reached (forward search)
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`Anytime D*: Path found in ${iterations} iterations with epsilon ${epsilon.toFixed(2)}`);
                 const path = this.reconstructAnytimePath(currentNode);
                 const cost = this.calculatePathLength(path);
                 return { path, cost };
@@ -2535,13 +2493,6 @@ class PathfindingVisualizer {
                 await this.sleep(this.animationSpeed / 6);
             }
         }
-        
-        if (iterations >= maxIterations) {
-            console.log(`Anytime D*: Maximum iterations reached for epsilon ${epsilon.toFixed(2)}`);
-        } else {
-            console.log(`Anytime D*: No path found for epsilon ${epsilon.toFixed(2)}`);
-        }
-        
         return null;
     }
     
@@ -2589,7 +2540,6 @@ class PathfindingVisualizer {
     }
     
     async runPRAStar() {
-        console.log('Starting PRA* (Partial Refinement A*) algorithm...');
         
         // Add overall timeout for entire algorithm
         const algorithmStartTime = Date.now();
@@ -2599,34 +2549,29 @@ class PathfindingVisualizer {
             this.clearVisualization();
             
             const clusterSize = Math.max(3, Math.floor(Math.min(this.gridWidth, this.gridHeight) / 8));
-            console.log(`PRA*: Using cluster size ${clusterSize}x${clusterSize}`);
-            
+
             // Create abstract clusters
-            console.log('PRA*: Creating clusters...');
+
             const clusters = this.createPRAClusters(clusterSize);
-            console.log(`PRA*: Created ${Object.keys(clusters).length} abstract clusters`);
             
             // Phase 1: Abstract planning
-            console.log('PRA*: Finding abstract path...');
+
             const abstractPath = await this.findPRAAbstractPath(clusters, clusterSize);
             
             if (!abstractPath) {
-                console.error('PRA*: No abstract path found');
+
                 this.pathLength = 0;
                 return;
             }
-            
-            console.log(`PRA*: Found abstract path with ${abstractPath.length} clusters`);
-            
+
             // Phase 2: Ensure actual start is part of the path
-            console.log('PRA*: Ensuring start node is included in path...');
+
             const actualStartNode = this.grid[this.startNode.y][this.startNode.x];
             
             // Always mark the actual start node as part of the path
             if (!actualStartNode.isPath) {
                 actualStartNode.isPath = true;
                 this.pathNodes.push(actualStartNode);
-                console.log(`PRA*: Marked actual start (${actualStartNode.x}, ${actualStartNode.y}) as path`);
             }
             
             // Phase 3: Connect start to first cluster if needed
@@ -2638,14 +2583,12 @@ class PathfindingVisualizer {
                 const firstClusterCenterY = Math.max(0, Math.min(firstCluster.y * clusterSize + Math.floor(clusterSize / 2), this.gridHeight - 1));
                 const firstClusterCenter = this.grid[firstClusterCenterY][firstClusterCenterX];
                 
-                console.log(`PRA*: Start at (${actualStartNode.x}, ${actualStartNode.y}), First cluster center at (${firstClusterCenter.x}, ${firstClusterCenter.y})`);
-                
                 // Connect if start is not at the cluster center
                 if (actualStartNode.x !== firstClusterCenter.x || actualStartNode.y !== firstClusterCenter.y) {
-                    console.log(`PRA*: Connecting start to first cluster center`);
+
                     await this.findRefinedPath(actualStartNode, firstClusterCenter);
                 } else {
-                    console.log('PRA*: Start already at cluster center, marking cluster center as path');
+
                     // Ensure cluster center is marked as path if start is already there
                     if (!firstClusterCenter.isPath) {
                         firstClusterCenter.isPath = true;
@@ -2655,17 +2598,16 @@ class PathfindingVisualizer {
             }
             
             // Phase 3: Partial refinement - only refine clusters containing the path
-            console.log('PRA*: Performing partial refinement...');
+
             let totalRefinements = 0;
             
             for (let i = 0; i < abstractPath.length - 1; i++) {
                 // Check timeout
                 if (Date.now() - algorithmStartTime > maxAlgorithmTime) {
-                    console.error('PRA*: Algorithm timeout - stopping refinement');
+
                     break;
                 }
-                
-                console.log(`PRA*: Refining segment ${i + 1}/${abstractPath.length - 1}`);
+
                 const refinementResult = await this.refineClusterPRA(abstractPath[i], abstractPath[i + 1], clusterSize);
                 if (refinementResult && refinementResult.refined) {
                     totalRefinements++;
@@ -2677,7 +2619,7 @@ class PathfindingVisualizer {
             }
             
             // Phase 5: Connect last cluster to actual goal and ensure goal is part of path
-            console.log('PRA*: Connecting path to actual goal...');
+
             if (abstractPath.length > 0) {
                 const lastCluster = abstractPath[abstractPath.length - 1];
                 
@@ -2688,14 +2630,12 @@ class PathfindingVisualizer {
                 
                 const actualGoalNode = this.grid[this.goalNode.y][this.goalNode.x];
                 
-                console.log(`PRA*: Last cluster center at (${lastClusterCenter.x}, ${lastClusterCenter.y}), Goal at (${actualGoalNode.x}, ${actualGoalNode.y})`);
-                
                 // Connect if goal is not at the cluster center
                 if (lastClusterCenter.x !== actualGoalNode.x || lastClusterCenter.y !== actualGoalNode.y) {
-                    console.log(`PRA*: Connecting last cluster center to goal`);
+
                     await this.findRefinedPath(lastClusterCenter, actualGoalNode);
                 } else {
-                    console.log('PRA*: Goal already at cluster center, marking cluster center as path');
+
                     // Ensure cluster center is marked as path if goal is already there
                     if (!lastClusterCenter.isPath) {
                         lastClusterCenter.isPath = true;
@@ -2705,34 +2645,30 @@ class PathfindingVisualizer {
             }
             
             // Phase 6: Ensure actual goal is part of the path
-            console.log('PRA*: Ensuring goal node is included in path...');
+
             const actualGoalNode = this.grid[this.goalNode.y][this.goalNode.x];
             
             // Always mark the actual goal node as part of the path
             if (!actualGoalNode.isPath) {
                 actualGoalNode.isPath = true;
                 this.pathNodes.push(actualGoalNode);
-                console.log(`PRA*: Marked actual goal (${actualGoalNode.x}, ${actualGoalNode.y}) as path`);
             }
-            
-            console.log(`PRA*: Path found with ${totalRefinements} cluster refinements!`);
-            
+
             // Calculate path length and update metrics
             if (this.pathNodes.length > 0) {
                 this.pathLength = this.calculatePathLength(this.pathNodes);
-                console.log(`PRA*: Path length: ${this.pathLength.toFixed(2)} with ${this.pathNodes.length} nodes`);
             } else {
                 this.pathLength = 0;
-                console.log('PRA*: No path nodes found - marking as failed');
+
             }
             
             // Final render to show the complete path
-            console.log('PRA*: Rendering final result...');
+
             this.render();
             
         } catch (error) {
-            console.error('PRA*: Error during algorithm execution:', error);
-            console.error('Stack trace:', error.stack);
+
+
             this.pathLength = 0; // Ensure failure is tracked
         }
     }
@@ -2776,11 +2712,10 @@ class PathfindingVisualizer {
         const goalCluster = this.getClusterCoords(this.goalNode.x, this.goalNode.y, clusterSize);
         
         if (!startCluster || !goalCluster) {
-            console.log('PRA*: Invalid start or goal cluster coordinates');
+
             return null;
         }
         
-        console.log(`PRA*: Abstract path from cluster (${startCluster.x}, ${startCluster.y}) to (${goalCluster.x}, ${goalCluster.y})`);
         
         // Simple abstract A* between cluster centers with safety limits
         const openSet = [startCluster];
@@ -2799,7 +2734,7 @@ class PathfindingVisualizer {
             
             // Debug logging every 100 iterations to detect stuck states
             if (iterations % 100 === 0) {
-                console.log(`PRA*: Abstract search iteration ${iterations}, openSet size: ${openSet.length}`);
+
                 this.updateRealTimeMetrics();
             }
             
@@ -2811,7 +2746,7 @@ class PathfindingVisualizer {
             this.visitedNodes.push({ x: current.x, y: current.y, isAbstract: true });
             
             if (current.x === goalCluster.x && current.y === goalCluster.y) {
-                console.log(`PRA*: Abstract path found in ${iterations} iterations`);
+
                 const path = [];
                 let node = current;
                 let pathLength = 0;
@@ -2864,9 +2799,9 @@ class PathfindingVisualizer {
         }
         
         if (iterations >= maxIterations) {
-            console.log('PRA*: Maximum iterations reached in abstract search');
+
         } else {
-            console.log('PRA*: No abstract path found');
+
         }
         
         return null;
@@ -2936,17 +2871,15 @@ class PathfindingVisualizer {
         
         // Safety check: ensure start and goal are not obstacles
         if (refinedStart.isObstacle || refinedGoal.isObstacle) {
-            console.log(`PRA*: Skipping refinement - start or goal is obstacle at (${clampedStartX}, ${clampedStartY}) -> (${clampedGoalX}, ${clampedGoalY})`);
             return { refined: false };
         }
         
-        console.log(`PRA*: Refining cluster path from (${clampedStartX}, ${clampedStartY}) to (${clampedGoalX}, ${clampedGoalY})`);
         return await this.findRefinedPath(refinedStart, refinedGoal);
     }
     
     async findRefinedPath(startNode, goalNode) {
         if (!startNode || !goalNode) {
-            console.log('PRA*: Invalid start or goal node for refinement');
+
             return { refined: false };
         }
         
@@ -2983,7 +2916,7 @@ class PathfindingVisualizer {
         while (openSet.length > 0 && iterations < maxIterations && this.isRunning && !this.isPaused) {
             // Timeout check for individual refinement
             if (Date.now() - refinementStartTime > maxRefinementTime) {
-                console.error(`PRA*: Refinement timeout after ${iterations} iterations`);
+
                 break;
             }
             iterations++;
@@ -3003,7 +2936,7 @@ class PathfindingVisualizer {
             }
             
             if (current === goalNode) {
-                console.log(`PRA*: Refined path segment found in ${iterations} iterations`);
+
                 let node = current;
                 let pathLength = 0;
                 const maxPathLength = this.gridWidth * this.gridHeight; // Prevent infinite reconstruction
@@ -3023,7 +2956,6 @@ class PathfindingVisualizer {
                     
                     // Stop when we reach the start node (include it in the path)
                     if (node === startNode) {
-                        console.log(`PRA*: Reached start node (${node.x}, ${node.y}) in path reconstruction`);
                         break;
                     }
                     
@@ -3069,92 +3001,66 @@ class PathfindingVisualizer {
             }
         }
         
-        if (iterations >= maxIterations) {
-            console.log(`PRA*: Maximum iterations (${maxIterations}) reached in refined search`);
-        } else if (Date.now() - refinementStartTime > maxRefinementTime) {
-            console.log(`PRA*: Timeout (${maxRefinementTime}ms) reached in refined search`);
-        } else {
-            console.log(`PRA*: No refined path found - openSet empty after ${iterations} iterations`);
-        }
-        
         return { refined: false };
     }
     
     async runHAAStar() {
-        console.log('Starting HAA* (Hierarchical Annotated A*) algorithm...');
         
         try {
             this.clearVisualization();
             
             const clusterSize = Math.max(4, Math.floor(Math.min(this.gridWidth, this.gridHeight) / 5));
-            console.log(`HAA*: Using cluster size ${clusterSize}x${clusterSize}`);
-            
+
             // Cycle through unit types to demonstrate different capabilities
             const unitTypes = ['ground', 'flying', 'amphibious'];
             if (!this.haaUnitTypeIndex) this.haaUnitTypeIndex = 0;
             const currentUnitType = unitTypes[this.haaUnitTypeIndex % unitTypes.length];
             this.haaUnitTypeIndex++;
-            
-            console.log(`HAA*: Pathfinding for ${currentUnitType} unit`);
-            if (currentUnitType === 'flying') {
-                console.log('HAA*: Flying unit can pass through obstacles (walls will show yellow X pattern)');
-            } else if (currentUnitType === 'amphibious') {
-                console.log('HAA*: Amphibious unit can cross obstacles at higher cost');
-            } else {
-                console.log('HAA*: Ground unit cannot pass through obstacles');
-            }
-            
+
             // Create annotated clusters with terrain capabilities
-            console.log('HAA*: Creating annotated clusters...');
+
             const annotatedClusters = this.createAnnotatedClusters(clusterSize, currentUnitType);
-            console.log(`HAA*: Created ${annotatedClusters.length} annotated cluster rows`);
-            
+
             // Find path considering unit capabilities
-            console.log('HAA*: Finding annotated path...');
+
             const annotatedPath = await this.findAnnotatedPath(annotatedClusters, clusterSize, currentUnitType);
             
             if (!annotatedPath) {
-                console.error('HAA*: No suitable path found for unit type');
+
                 return;
             }
-            
-            console.log(`HAA*: Found annotated path with ${annotatedPath.length} waypoints`);
-            
+
             // Connect actual start to first waypoint
-            console.log('HAA*: Connecting actual start to path...');
+
             if (annotatedPath.length > 0) {
                 const startNode = this.grid[this.startNode.y][this.startNode.x];
                 const firstWaypoint = annotatedPath[0];
                 if (startNode.x !== firstWaypoint.x || startNode.y !== firstWaypoint.y) {
-                    console.log(`HAA*: Connecting start (${startNode.x}, ${startNode.y}) to first waypoint (${firstWaypoint.x}, ${firstWaypoint.y})`);
                     await this.findCapabilityConstrainedPath(startNode, firstWaypoint, currentUnitType);
                 }
             }
             
             // Refine path with capability constraints
-            console.log('HAA*: Refining path with terrain capabilities...');
+
             await this.refineAnnotatedPath(annotatedPath, clusterSize, currentUnitType);
             
             // Connect last waypoint to actual goal
-            console.log('HAA*: Connecting path to actual goal...');
+
             if (annotatedPath.length > 0) {
                 const goalNode = this.grid[this.goalNode.y][this.goalNode.x];
                 const lastWaypoint = annotatedPath[annotatedPath.length - 1];
                 if (lastWaypoint.x !== goalNode.x || lastWaypoint.y !== goalNode.y) {
-                    console.log(`HAA*: Connecting last waypoint (${lastWaypoint.x}, ${lastWaypoint.y}) to goal (${goalNode.x}, ${goalNode.y})`);
                     await this.findCapabilityConstrainedPath(lastWaypoint, goalNode, currentUnitType);
                 }
             }
-            
-            console.log(`HAA*: Hierarchical annotated path found for ${currentUnitType} unit!`);
-            
+
             // Final render to show the complete path
-            console.log('HAA*: Rendering final result...');
+
             this.render();
             
         } catch (error) {
-            console.error('HAA*: Error during algorithm execution:', error);
-            console.error('Stack trace:', error.stack);
+
+
         }
     }
     
@@ -3274,7 +3180,7 @@ class PathfindingVisualizer {
         
         if (!clusters[startClusterY] || !clusters[startClusterY][startClusterX] ||
             !clusters[goalClusterY] || !clusters[goalClusterY][goalClusterX]) {
-            console.log('HAA*: Invalid cluster coordinates');
+
             return null;
         }
         
@@ -3282,11 +3188,9 @@ class PathfindingVisualizer {
         const goalCluster = clusters[goalClusterY][goalClusterX];
         
         if (!startCluster.traversable || !goalCluster.traversable) {
-            console.log(`HAA*: Start or goal cluster not traversable for ${unitType} unit`);
+
             return null;
         }
-        
-        console.log(`HAA*: Finding annotated path for ${unitType} unit from cluster (${startCluster.x}, ${startCluster.y}) to (${goalCluster.x}, ${goalCluster.y})`);
         
         const openSet = [startCluster];
         const closedSet = [];
@@ -3307,7 +3211,7 @@ class PathfindingVisualizer {
             closedSet.push(current);
             
             if (current === goalCluster) {
-                console.log(`HAA*: Annotated path found in ${iterations} iterations`);
+
                 const path = [];
                 let node = current;
                 let pathLength = 0;
@@ -3349,9 +3253,9 @@ class PathfindingVisualizer {
         }
         
         if (iterations >= maxIterations) {
-            console.log('HAA*: Maximum iterations reached in annotated search');
+
         } else {
-            console.log(`HAA*: No annotated path found for ${unitType} unit`);
+
         }
         
         return null;
@@ -3417,7 +3321,7 @@ class PathfindingVisualizer {
     
     async findCapabilityConstrainedPath(startNode, goalNode, unitType) {
         if (!startNode || !goalNode) {
-            console.log('HAA*: Invalid nodes for capability-constrained search');
+
             return false;
         }
         
@@ -3450,7 +3354,7 @@ class PathfindingVisualizer {
             }
             
             if (current === goalNode) {
-                console.log(`HAA*: Capability-constrained path found in ${iterations} iterations for ${unitType} unit`);
+
                 let node = current;
                 let pathLength = 0;
                 const maxPathLength = this.gridWidth * this.gridHeight; // Prevent infinite reconstruction
@@ -3497,9 +3401,9 @@ class PathfindingVisualizer {
         }
         
         if (iterations >= maxIterations) {
-            console.log(`HAA*: Maximum iterations reached in capability-constrained search for ${unitType} unit`);
+
         } else {
-            console.log(`HAA*: No capability-constrained path found for ${unitType} unit`);
+
         }
         
         return false;
@@ -4051,7 +3955,7 @@ class PathfindingVisualizer {
     
     render() {
         if (!this.ctx || !this.canvas) {
-            console.error('Canvas or context not available for rendering');
+
             return;
         }
         
@@ -4194,21 +4098,19 @@ class PathfindingVisualizer {
 
     // Debug function to test hierarchical algorithms
     debugHierarchicalAlgorithms() {
-        console.log('=== Debugging Hierarchical Algorithms ===');
-        console.log('Start node:', this.startNode);
-        console.log('Goal node:', this.goalNode);
-        console.log('Grid dimensions:', this.gridWidth, 'x', this.gridHeight);
-        console.log('Grid exists:', !!this.grid);
-        console.log('Running status:', this.isRunning);
-        console.log('Paused status:', this.isPaused);
-        
+
+
+
+
+
+
+
         // Test if basic functions exist
         const functions = ['createClusters', 'buildAbstractGraph', 'findAbstractPath', 'refinePath'];
         functions.forEach(funcName => {
-            console.log(`Function ${funcName} exists:`, typeof this[funcName] === 'function');
+
         });
-        
-        console.log('=== End Debug ===');
+
     }
 
     updateRealTimeMetrics() {
@@ -4329,12 +4231,9 @@ class PathfindingVisualizer {
         const originalAlgorithm = this.currentAlgorithm;
         const originalSpeed = this.animationSpeed;
         this.animationSpeed = 0; // Run without visualization for speed
-        
-        console.log('Starting comprehensive algorithm comparison...');
-        
+
         for (let i = 0; i < algorithms.length; i++) {
             const algorithm = algorithms[i];
-            console.log(`Testing ${algorithm} (${i + 1}/${algorithms.length})...`);
             
             // Update algorithm info in real-time
             this.currentAlgorithm = algorithm;
@@ -4434,9 +4333,7 @@ class PathfindingVisualizer {
         this.currentAlgorithm = originalAlgorithm;
         this.clearVisualization();
         this.updateAlgorithmInfo(); // Reset info panel to original algorithm
-        
-        console.log('Algorithm comparison complete!');
-        
+
         // Sort results by performance (best first)
         const sortedResults = this.sortResultsByPerformance(results);
         
