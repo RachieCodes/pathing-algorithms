@@ -336,6 +336,23 @@ body {
     font-size: 1.1rem;
 }
 
+/* Full-Width Comparison Section */
+.comparison-section {
+    margin: 30px 0;
+    width: 100%;
+}
+
+.comparison-section .comparison-chart {
+    width: 100%;
+    max-width: none;
+}
+
+.comparison-section .comparison-results-container {
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
 /* Modal */
 .modal {
     display: none;
@@ -430,6 +447,193 @@ body {
     background: #f7fafc;
 }
 
+.comparison-table tr.success {
+    background: #f0fff4;
+}
+
+.comparison-table tr.failed {
+    background: #fef5e7;
+}
+
+/* Comparison Status and Category Badges */
+.status-success {
+    color: #38a169;
+    font-weight: 600;
+}
+
+.status-failed {
+    color: #e53e3e;
+    font-weight: 600;
+}
+
+.category-badge {
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.8em;
+    font-weight: 500;
+    color: white;
+}
+
+.category-badge.classic { background: #3182ce; }
+.category-badge.anyangle { background: #9f7aea; }
+.category-badge.optimized { background: #38a169; }
+.category-badge.memoryefficient { background: #ed8936; }
+.category-badge.sampling { background: #e53e3e; }
+.category-badge.dynamic { background: #805ad5; }
+.category-badge.adaptive { background: #d69e2e; }
+.category-badge.anytime { background: #f56565; }
+
+.optimal-yes {
+    color: #38a169;
+    font-weight: 600;
+}
+
+.optimal-no {
+    color: #718096;
+}
+
+.optimal-badge {
+    color: #f6ad55;
+    margin-left: 5px;
+    font-size: 0.9em;
+}
+
+/* Ranking Badges */
+.rank-badge {
+    padding: 4px 8px;
+    border-radius: 50%;
+    color: white;
+    font-weight: 700;
+    font-size: 0.8em;
+    min-width: 24px;
+    text-align: center;
+    display: inline-block;
+}
+
+.rank-1 { background: #ffd700; color: #2d3748; } /* Gold */
+.rank-2 { background: #c0c0c0; color: #2d3748; } /* Silver */
+.rank-3 { background: #cd7f32; color: white; } /* Bronze */
+
+.rank-badge:not(.rank-1):not(.rank-2):not(.rank-3) {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.rank-failed {
+    color: #a0aec0;
+    font-weight: bold;
+}
+
+/* Progress Bar */
+.comparison-progress {
+    text-align: center;
+    padding: 20px;
+    background: #f7fafc;
+    border-radius: 8px;
+    border: 2px solid #e2e8f0;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    margin: 15px 0;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    transition: width 0.3s ease;
+    border-radius: 10px;
+}
+
+/* Comparison Overview */
+.comparison-overview {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.stats-summary {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.stat-label {
+    font-size: 0.9em;
+    opacity: 0.9;
+}
+
+.stat-value {
+    font-size: 1.2em;
+    font-weight: 700;
+}
+
+/* Analysis Sections */
+.comparison-analysis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.analysis-section {
+    background: #f7fafc;
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 4px solid #667eea;
+}
+
+.analysis-section h4 {
+    margin-bottom: 15px;
+    color: #2d3748;
+    font-size: 1.1em;
+}
+
+.analysis-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.analysis-section li {
+    padding: 8px 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.analysis-section li:last-child {
+    border-bottom: none;
+}
+
+/* Comparison Results Container */
+.comparison-results-container {
+    min-height: 50px;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px dashed #e2e8f0;
+    color: #718096;
+    text-align: center;
+    font-style: italic;
+}
+
+.comparison-results-container:not(:empty) {
+    background: white;
+    border: 1px solid #e2e8f0;
+    text-align: left;
+    font-style: normal;
+}
+
 /* Inline Comparison Results */
 .comparison-results-inline {
     margin-top: 20px;
@@ -496,25 +700,37 @@ body {
     font-weight: 600;
 }
 
-.tips {
+.faqs {
     margin-top: 25px;
     padding-top: 25px;
     border-top: 2px solid #e2e8f0;
 }
 
-.tips h4 {
+.faqs h4 {
     color: #2d3748;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     font-weight: 600;
 }
 
-.tips ul {
-    padding-left: 20px;
+.faq-item {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #4299e1;
 }
 
-.tips li {
-    margin-bottom: 6px;
+.faq-item h5 {
+    color: #2d3748;
+    margin: 0 0 8px 0;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.faq-item p {
+    margin: 0;
     color: #4a5568;
+    line-height: 1.6;
 }
 
 /* Responsive Design */

@@ -2,7 +2,6 @@ class PathfindingVisualizer {
     constructor() {
         this.canvas = document.getElementById('pathfinding-canvas');
         if (!this.canvas) {
-            console.error('Canvas element not found!');
             return;
         }
         this.ctx = this.canvas.getContext('2d');
@@ -58,9 +57,6 @@ class PathfindingVisualizer {
             'mtd_star_lite': { name: 'MTD*-Lite', heuristic: 'manhattan', weight: 1.0 },
             'tree_aa_star': { name: 'Tree-AA*', heuristic: 'manhattan', weight: 1.0 },
             'anytime_d_star': { name: 'Anytime D*', heuristic: 'manhattan', weight: 2.5 },
-            'hpa_star': { name: 'HPA*', heuristic: 'manhattan', weight: 1.0 },
-            'pra_star': { name: 'PRA*', heuristic: 'manhattan', weight: 1.0 },
-            'haa_star': { name: 'HAA*', heuristic: 'manhattan', weight: 1.0 },
             'anytime_a_star': { name: 'Anytime A*', heuristic: 'manhattan', weight: 3.0 },
             'rrt': { name: 'RRT', heuristic: 'none', weight: 1.0 }
         };
@@ -220,7 +216,6 @@ class PathfindingVisualizer {
     
     changeGridSize(size) {
         this.stopAlgorithm();
-        console.log('Changing grid size to:', size);
         
         let width, height;
         
@@ -234,7 +229,6 @@ class PathfindingVisualizer {
         
         // Validate grid size
         if (isNaN(width) || isNaN(height) || width < 5 || height < 5 || width > 100 || height > 100) {
-            console.error('Invalid grid size. Must be between 5 and 100. Got:', width, 'x', height);
             return;
         }
         
@@ -280,8 +274,6 @@ class PathfindingVisualizer {
         this.clearVisualization();
         this.generateRandomMaze();
         this.render();
-        
-        console.log('Grid size changed to:', this.gridWidth, 'x', this.gridHeight, 'Canvas size:', this.canvas.width, 'x', this.canvas.height);
     }
     
     updateObstacleDensity(density) {
@@ -297,7 +289,6 @@ class PathfindingVisualizer {
     
     setEditMode(mode) {
         this.editMode = mode;
-        console.log('Edit mode changed to:', mode);
     }
     
     handleMouseDown(e) {
@@ -389,9 +380,6 @@ class PathfindingVisualizer {
             'mtd_star_lite': 'MTD*-Lite (Moving Target D*-Lite) extends D*-Lite to handle both moving agents and moving targets simultaneously.',
             'tree_aa_star': 'Tree-AA* is an adaptive algorithm for unknown terrain exploration, progressively mapping the environment while pathfinding.',
             'anytime_d_star': 'Anytime D* combines D*-Lite with anytime search, providing increasingly better solutions under time constraints in dynamic environments.',
-            'hpa_star': 'HPA* (Hierarchical Path-Finding A*) uses a two-level hierarchy to efficiently pathfind on large maps, ideal for RTS games with multiple units.',
-            'pra_star': 'PRA* (Partial Refinement A*) selectively refines only necessary parts of the hierarchical search space, improving efficiency over HPA*.',
-            'haa_star': 'HAA* (Hierarchical Annotated A*) extends HPA* with terrain annotations, allowing different unit types with varying movement capabilities.',
             'anytime_a_star': 'Anytime A* provides progressively improving path quality over time by starting with an inflated heuristic and gradually reducing it.',
             'rrt': 'Rapidly-exploring Random Tree builds a tree by random sampling, good for complex environments but paths may be suboptimal.'
         };
@@ -414,9 +402,6 @@ class PathfindingVisualizer {
             'mtd_star_lite': 'O(E log V)',
             'tree_aa_star': 'O(b^d)',
             'anytime_d_star': 'O(E log V)',
-            'hpa_star': 'O(V_abs + E_abs)',
-            'pra_star': 'O(V_abs + E_abs)',
-            'haa_star': 'O(V_abs + E_abs)',
             'anytime_a_star': 'O(b^d)'
         };
         
@@ -430,9 +415,6 @@ class PathfindingVisualizer {
             'incremental_phi_star': 'O(V)',
             'mtd_star_lite': 'O(V)',
             'anytime_d_star': 'O(V)',
-            'hpa_star': 'O(V_abs)',
-            'pra_star': 'O(V_abs)',
-            'haa_star': 'O(V_abs)'
         };
         
         const optimality = {
@@ -453,9 +435,6 @@ class PathfindingVisualizer {
             'mtd_star_lite': 'Optimal',
             'tree_aa_star': 'Optimal',
             'anytime_d_star': 'Anytime',
-            'hpa_star': 'Near-Optimal',
-            'pra_star': 'Near-Optimal',
-            'haa_star': 'Near-Optimal',
             'anytime_a_star': 'Anytime',
             'rrt': 'Suboptimal'
         };
@@ -555,15 +534,6 @@ class PathfindingVisualizer {
                 case 'anytime_d_star':
                     await this.runAnytimeDStar();
                     break;
-                case 'hpa_star':
-                    await this.runHPAStar();
-                    break;
-                case 'pra_star':
-                    await this.runPRAStar();
-                    break;
-                case 'haa_star':
-                    await this.runHAAStar();
-                    break;
                 case 'anytime_a_star':
                     await this.runAnytimeAStar();
                     break;
@@ -574,10 +544,6 @@ class PathfindingVisualizer {
                     await this.runAStar();
             }
         } catch (error) {
-            console.error('Algorithm execution error:', error);
-            console.error('Error details:', error.message);
-            console.error('Stack trace:', error.stack);
-            
             // Show error message in UI as well
             if (typeof this.showErrorMessage === 'function') {
                 this.showErrorMessage(`Algorithm failed: ${error.message}`);
@@ -606,13 +572,10 @@ class PathfindingVisualizer {
             
             // Update final metrics when stopped
             this.updateRealTimeMetrics();
-            
-            console.log('Algorithm execution stopped');
         }
     }
     
     async runBFS() {
-        console.log('Starting BFS (Breadth-First Search) algorithm...');
         this.clearVisualization();
         
         const startNode = this.grid[this.startNode.y][this.startNode.x];
@@ -634,7 +597,6 @@ class PathfindingVisualizer {
             
             // Check if we reached the goal
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`BFS: Path found in ${iterations} iterations!`);
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -661,12 +623,9 @@ class PathfindingVisualizer {
                 await this.sleep(this.animationSpeed);
             }
         }
-        
-        console.log('BFS: No path found');
     }
     
     async runDFS() {
-        console.log('Starting DFS (Depth-First Search) algorithm...');
         this.clearVisualization();
         
         const startNode = this.grid[this.startNode.y][this.startNode.x];
@@ -688,7 +647,6 @@ class PathfindingVisualizer {
             
             // Check if we reached the goal
             if (currentNode.x === goalNode.x && currentNode.y === goalNode.y) {
-                console.log(`DFS: Path found in ${iterations} iterations!`);
                 this.reconstructPath(currentNode);
                 return;
             }
@@ -717,8 +675,6 @@ class PathfindingVisualizer {
                 await this.sleep(this.animationSpeed);
             }
         }
-        
-        console.log('DFS: No path found');
     }
     
     async runAStar() {
@@ -1692,539 +1648,6 @@ class PathfindingVisualizer {
         this.reconstructPath(goalNode);
     }
     
-    async runHPAStar() {
-        console.log('=== HPA* ALGORITHM START ===');
-        console.log('Starting HPA* (Hierarchical Path-Finding A*) algorithm...');
-        
-        // Add a timeout safety mechanism
-        const startTime = Date.now();
-        const maxDuration = 30000; // 30 seconds maximum
-        
-        // Immediate check - don't even try-catch this part
-        if (!this.grid || this.grid.length === 0) {
-            console.error('FATAL: Grid is not initialized!');
-            console.log('Grid state:', this.grid);
-            return;
-        }
-        
-        console.log('Grid check passed - Grid dimensions:', this.gridWidth, 'x', this.gridHeight);
-        
-        // Check first row of grid to make sure it's properly initialized
-        if (!this.grid[0] || this.grid[0].length === 0) {
-            console.error('FATAL: Grid first row is not initialized!');
-            console.log('First row state:', this.grid[0]);
-            return;
-        }
-        
-        console.log('Grid structure check passed');
-        
-        // Debug information
-        this.debugHierarchicalAlgorithms();
-        
-        try {
-            console.log('Step 1: Clearing visualization...');
-            this.clearVisualization();
-            console.log('Step 1: Complete');
-            
-            // Safety checks
-            console.log('Step 2: Checking start and goal nodes...');
-            if (!this.startNode || !this.goalNode) {
-                console.error('HPA*: Start or goal node not set');
-                console.log('Start node:', this.startNode);
-                console.log('Goal node:', this.goalNode);
-                return;
-            }
-            
-            if (this.startNode.x === this.goalNode.x && this.startNode.y === this.goalNode.y) {
-                console.log('HPA*: Start and goal are the same');
-                return;
-            }
-            
-            console.log(`HPA*: Starting from (${this.startNode.x}, ${this.startNode.y}) to (${this.goalNode.x}, ${this.goalNode.y})`);
-            console.log('Step 2: Complete');
-        } catch (error) {
-            console.error('HPA*: Error in initial setup:', error);
-            console.error('Error stack:', error.stack);
-            return;
-        }
-        
-        try {
-            console.log('Step 3: Calculating cluster size...');
-            const clusterSize = Math.max(4, Math.floor(Math.min(this.gridWidth, this.gridHeight) / 6));
-            console.log(`HPA*: Using cluster size ${clusterSize}x${clusterSize}`);
-            console.log('Step 3: Complete');
-            
-            // Phase 1: Create abstract graph
-            console.log('Step 4: Creating clusters...');
-            const clusters = this.createClusters(clusterSize);
-            console.log(`HPA*: Created ${clusters.length} cluster rows`);
-            console.log('Step 4: Complete');
-            
-            console.log('Step 5: Building abstract graph...');
-            const abstractGraph = this.buildAbstractGraph(clusters, clusterSize);
-            console.log(`HPA*: Created ${abstractGraph.nodes.length} abstract nodes and ${abstractGraph.edges.length} abstract edges`);
-            console.log('Step 5: Complete');
-            
-            if (abstractGraph.nodes.length === 0) {
-                console.error('HPA*: No abstract nodes created');
-                return;
-            }
-            
-            // Phase 2: Find abstract path
-            console.log('HPA*: Finding abstract path...');
-            const abstractPath = await this.findAbstractPath(abstractGraph, clusterSize);
-            
-            if (!abstractPath || abstractPath.length === 0) {
-                console.error('HPA*: No abstract path found');
-                return;
-            }
-            
-            console.log(`HPA*: Found abstract path with ${abstractPath.length} waypoints`);
-            
-            // Phase 3: Refine path within clusters
-            console.log('HPA*: Refining path within clusters...');
-            await this.refinePath(abstractPath, clusterSize);
-            
-            console.log(`HPA*: Hierarchical path found with ${this.pathNodes.length} nodes!`);
-            
-            // Final render to show the complete path
-            console.log('HPA*: Rendering final result...');
-            this.render();
-            
-            const totalTime = Date.now() - startTime;
-            console.log(`HPA*: Total execution time: ${totalTime}ms`);
-            console.log('=== HPA* ALGORITHM COMPLETED SUCCESSFULLY ===');
-        } catch (error) {
-            console.error('=== HPA* ALGORITHM FAILED ===');
-            console.error('HPA*: Error during algorithm execution:', error);
-            console.error('Stack trace:', error.stack);
-            console.error('Error occurred at step:', error.step || 'unknown');
-        }
-    }
-    
-    createClusters(clusterSize) {
-        const clusters = [];
-        
-        for (let cy = 0; cy < Math.ceil(this.gridHeight / clusterSize); cy++) {
-            clusters[cy] = [];
-            for (let cx = 0; cx < Math.ceil(this.gridWidth / clusterSize); cx++) {
-                const cluster = {
-                    id: `${cx}-${cy}`,
-                    x: cx,
-                    y: cy,
-                    entrances: [],
-                    nodes: []
-                };
-                
-                // Add nodes to cluster
-                for (let y = cy * clusterSize; y < Math.min((cy + 1) * clusterSize, this.gridHeight); y++) {
-                    for (let x = cx * clusterSize; x < Math.min((cx + 1) * clusterSize, this.gridWidth); x++) {
-                        cluster.nodes.push(this.grid[y][x]);
-                    }
-                }
-                
-                // Find entrance points (border nodes that connect to adjacent clusters)
-                this.findEntrancePoints(cluster, clusterSize, cx, cy);
-                clusters[cy][cx] = cluster;
-            }
-        }
-        
-        return clusters;
-    }
-    
-    findEntrancePoints(cluster, clusterSize, cx, cy) {
-        const entrances = [];
-        
-        // Check all border positions
-        const minX = cx * clusterSize;
-        const maxX = Math.min((cx + 1) * clusterSize - 1, this.gridWidth - 1);
-        const minY = cy * clusterSize;
-        const maxY = Math.min((cy + 1) * clusterSize - 1, this.gridHeight - 1);
-        
-        // Top and bottom borders
-        for (let x = minX; x <= maxX; x++) {
-            if (minY > 0 && !this.grid[minY][x].isObstacle && !this.grid[minY - 1][x].isObstacle) {
-                entrances.push({ x, y: minY, direction: 'north' });
-            }
-            if (maxY < this.gridHeight - 1 && !this.grid[maxY][x].isObstacle && !this.grid[maxY + 1][x].isObstacle) {
-                entrances.push({ x, y: maxY, direction: 'south' });
-            }
-        }
-        
-        // Left and right borders
-        for (let y = minY; y <= maxY; y++) {
-            if (minX > 0 && !this.grid[y][minX].isObstacle && !this.grid[y][minX - 1].isObstacle) {
-                entrances.push({ x: minX, y, direction: 'west' });
-            }
-            if (maxX < this.gridWidth - 1 && !this.grid[y][maxX].isObstacle && !this.grid[y][maxX + 1].isObstacle) {
-                entrances.push({ x: maxX, y, direction: 'east' });
-            }
-        }
-        
-        cluster.entrances = entrances;
-    }
-    
-    buildAbstractGraph(clusters, clusterSize) {
-        const abstractNodes = [];
-        const abstractEdges = [];
-        
-        // Calculate which clusters contain start and goal
-        const startClusterX = Math.floor(this.startNode.x / clusterSize);
-        const startClusterY = Math.floor(this.startNode.y / clusterSize);
-        const goalClusterX = Math.floor(this.goalNode.x / clusterSize);
-        const goalClusterY = Math.floor(this.goalNode.y / clusterSize);
-        
-        console.log(`HPA*: Start node (${this.startNode.x}, ${this.startNode.y}) in cluster (${startClusterX}, ${startClusterY})`);
-        console.log(`HPA*: Goal node (${this.goalNode.x}, ${this.goalNode.y}) in cluster (${goalClusterX}, ${goalClusterY})`);
-        
-        // First, add the actual start and goal nodes to the abstract graph
-        const startNode = {
-            x: this.startNode.x,
-            y: this.startNode.y,
-            clusterX: startClusterX,
-            clusterY: startClusterY,
-            clusterId: `${startClusterX}-${startClusterY}`,
-            type: 'start'
-        };
-        
-        const goalNode = {
-            x: this.goalNode.x,
-            y: this.goalNode.y,
-            clusterX: goalClusterX,
-            clusterY: goalClusterY,
-            clusterId: `${goalClusterX}-${goalClusterY}`,
-            type: 'goal'
-        };
-        
-        abstractNodes.push(startNode);
-        abstractNodes.push(goalNode);
-        
-        console.log(`HPA*: Added start node at (${startNode.x}, ${startNode.y}) in cluster (${startClusterX}, ${startClusterY})`);
-        console.log(`HPA*: Added goal node at (${goalNode.x}, ${goalNode.y}) in cluster (${goalClusterX}, ${goalClusterY})`);
-        
-        // Create nodes for each cluster center (excluding start/goal clusters)
-        for (let cy = 0; cy < Math.ceil(this.gridHeight / clusterSize); cy++) {
-            for (let cx = 0; cx < Math.ceil(this.gridWidth / clusterSize); cx++) {
-                // Skip if this cluster already has start or goal node
-                if ((cx === startClusterX && cy === startClusterY) || 
-                    (cx === goalClusterX && cy === goalClusterY)) {
-                    continue;
-                }
-                
-                const centerX = cx * clusterSize + Math.floor(clusterSize / 2);
-                const centerY = cy * clusterSize + Math.floor(clusterSize / 2);
-                
-                // Clamp to grid bounds
-                const nodeX = Math.min(centerX, this.gridWidth - 1);
-                const nodeY = Math.min(centerY, this.gridHeight - 1);
-                
-                abstractNodes.push({
-                    x: nodeX,
-                    y: nodeY,
-                    clusterX: cx,
-                    clusterY: cy,
-                    clusterId: `${cx}-${cy}`,
-                    type: 'cluster'
-                });
-            }
-        }
-        
-        // Create abstract edges between adjacent clusters
-        for (const currentNode of abstractNodes) {
-            const cx = currentNode.clusterX;
-            const cy = currentNode.clusterY;
-            
-            // Add edges to adjacent clusters
-            const neighbors = [
-                { dx: -1, dy: 0 }, { dx: 1, dy: 0 },  // Left, Right
-                { dx: 0, dy: -1 }, { dx: 0, dy: 1 }   // Up, Down
-            ];
-            
-            for (const { dx, dy } of neighbors) {
-                const neighborX = cx + dx;
-                const neighborY = cy + dy;
-                
-                if (neighborX >= 0 && neighborX < Math.ceil(this.gridWidth / clusterSize) &&
-                    neighborY >= 0 && neighborY < Math.ceil(this.gridHeight / clusterSize)) {
-                    
-                    const neighborNode = abstractNodes.find(n => n.clusterX === neighborX && n.clusterY === neighborY);
-                    if (neighborNode && neighborNode !== currentNode) {
-                        // Calculate actual distance between the nodes
-                        const distance = this.calculateHeuristic(currentNode, neighborNode);
-                        abstractEdges.push({
-                            from: currentNode,
-                            to: neighborNode,
-                            cost: distance
-                        });
-                    }
-                }
-            }
-        }
-        
-        console.log(`HPA*: Created ${abstractNodes.length} abstract nodes and ${abstractEdges.length} abstract edges`);
-        return { nodes: abstractNodes, edges: abstractEdges };
-    }
-    
-    getClusterId(x, y, clusterSize) {
-        const cx = Math.floor(x / clusterSize);
-        const cy = Math.floor(y / clusterSize);
-        return `${cx}-${cy}`;
-    }
-    
-    async findAbstractPath(abstractGraph, clusterSize) {
-        // Simplified abstract pathfinding using A* with safeguards
-        const startAbstract = abstractGraph.nodes.find(n => n.type === 'start');
-        const goalAbstract = abstractGraph.nodes.find(n => n.type === 'goal');
-        
-        if (!startAbstract || !goalAbstract) {
-            console.log('HPA*: Start or goal not found in abstract graph');
-            return null;
-        }
-        
-        // Initialize all abstract nodes
-        for (const node of abstractGraph.nodes) {
-            node.gCost = Infinity;
-            node.hCost = 0;
-            node.fCost = Infinity;
-            node.parent = null;
-            node.visited = false;
-        }
-        
-        // Use A* on abstract level
-        const openSet = [startAbstract];
-        const closedSet = [];
-        
-        startAbstract.gCost = 0;
-        startAbstract.hCost = this.calculateHeuristic(startAbstract, goalAbstract);
-        startAbstract.fCost = startAbstract.gCost + startAbstract.hCost;
-        
-        let iterations = 0;
-        const maxIterations = abstractGraph.nodes.length * 2; // Prevent infinite loops
-        
-        while (openSet.length > 0 && iterations < maxIterations && this.isRunning && !this.isPaused) {
-            iterations++;
-            
-            openSet.sort((a, b) => a.fCost - b.fCost);
-            const current = openSet.shift();
-            current.visited = true;
-            closedSet.push(current);
-            
-            if (current === goalAbstract) {
-                console.log(`HPA*: Abstract path found in ${iterations} iterations`);
-                const path = [];
-                let node = current;
-                const maxPathLength = abstractGraph.nodes.length; // Prevent infinite reconstruction
-                let pathLength = 0;
-                
-                while (node && pathLength < maxPathLength) {
-                    path.unshift(node);
-                    console.log(`HPA*: Abstract path waypoint: (${node.x}, ${node.y}) type: ${node.type}`);
-                    node = node.parent;
-                    pathLength++;
-                }
-                
-                console.log(`HPA*: Abstract path reconstructed with ${path.length} waypoints`);
-                console.log(`HPA*: Path starts at (${path[0]?.x}, ${path[0]?.y}) and ends at (${path[path.length-1]?.x}, ${path[path.length-1]?.y})`);
-                
-                return path;
-            }
-            
-            // Find neighbors in same cluster or adjacent clusters
-            const neighbors = this.getAbstractNeighbors(current, abstractGraph, clusterSize);
-            
-            for (const neighbor of neighbors) {
-                if (neighbor.visited || closedSet.includes(neighbor)) continue;
-                
-                const tentativeG = current.gCost + this.calculateHeuristic(current, neighbor);
-                
-                // Check if this is a better path
-                if (tentativeG < neighbor.gCost) {
-                    neighbor.parent = current;
-                    neighbor.gCost = tentativeG;
-                    neighbor.hCost = this.calculateHeuristic(neighbor, goalAbstract);
-                    neighbor.fCost = neighbor.gCost + neighbor.hCost;
-                    
-                    if (!openSet.includes(neighbor)) {
-                        openSet.push(neighbor);
-                    }
-                }
-            }
-            
-            // Visualization update
-            if (iterations % 10 === 0) {
-                await this.sleep(1);
-            }
-        }
-        
-        if (iterations >= maxIterations) {
-            console.log('HPA*: Maximum iterations reached in abstract search');
-        } else {
-            console.log('HPA*: No abstract path found');
-        }
-        
-        return null;
-    }
-    
-    getAbstractNeighbors(node, abstractGraph, clusterSize) {
-        const neighbors = [];
-        
-        // Find edges from this node using the abstract graph structure
-        const edges = abstractGraph.edges.filter(edge => edge.from === node);
-        
-        for (const edge of edges) {
-            neighbors.push(edge.to);
-        }
-        
-        return neighbors;
-    }
-    
-    async refinePath(abstractPath, clusterSize) {
-        console.log(`HPA*: Refining path with ${abstractPath.length} waypoints`);
-        
-        // Ensure we start from actual start node and end at actual goal node
-        const actualStart = { x: this.startNode.x, y: this.startNode.y, type: 'start' };
-        const actualGoal = { x: this.goalNode.x, y: this.goalNode.y, type: 'goal' };
-        
-        console.log(`HPA*: Path refinement from (${actualStart.x}, ${actualStart.y}) to (${actualGoal.x}, ${actualGoal.y})`);
-        
-        if (abstractPath.length === 0) {
-            // Direct path if no waypoints
-            await this.findDetailedPath(actualStart, actualGoal);
-            return;
-        }
-        
-        // Connect start to first waypoint
-        if (abstractPath[0].x !== actualStart.x || abstractPath[0].y !== actualStart.y) {
-            console.log(`HPA*: Connecting start (${actualStart.x}, ${actualStart.y}) to first waypoint (${abstractPath[0].x}, ${abstractPath[0].y})`);
-            await this.findDetailedPath(actualStart, abstractPath[0]);
-        }
-        
-        // Connect waypoints
-        for (let i = 0; i < abstractPath.length - 1; i++) {
-            const from = abstractPath[i];
-            const to = abstractPath[i + 1];
-            console.log(`HPA*: Connecting waypoint (${from.x}, ${from.y}) to (${to.x}, ${to.y})`);
-            await this.findDetailedPath(from, to);
-        }
-        
-        // Connect last waypoint to goal
-        const lastWaypoint = abstractPath[abstractPath.length - 1];
-        if (lastWaypoint.x !== actualGoal.x || lastWaypoint.y !== actualGoal.y) {
-            console.log(`HPA*: Connecting last waypoint (${lastWaypoint.x}, ${lastWaypoint.y}) to goal (${actualGoal.x}, ${actualGoal.y})`);
-            await this.findDetailedPath(lastWaypoint, actualGoal);
-        }
-    }
-    
-    async findDetailedPath(from, to) {
-        const fromNode = this.grid[from.y][from.x];
-        const toNode = this.grid[to.y][to.x];
-        
-        // Safety check
-        if (!fromNode || !toNode || fromNode.isObstacle || toNode.isObstacle) {
-            console.log('HPA*: Invalid detailed path segment');
-            return;
-        }
-        
-        // If from and to are the same, no need to find a path
-        if (fromNode === toNode) return;
-        
-        // Reset path-finding state for this segment
-        const segmentNodes = new Set();
-        for (let y = 0; y < this.gridHeight; y++) {
-            for (let x = 0; x < this.gridWidth; x++) {
-                const node = this.grid[y][x];
-                if (!node.isVisited) { // Don't reset already processed nodes
-                    node.gCost = Infinity;
-                    node.hCost = 0;
-                    node.fCost = Infinity;
-                    node.parent = null;
-                }
-                segmentNodes.add(node);
-            }
-        }
-        
-        const openSet = [fromNode];
-        const closedSet = [];
-        
-        fromNode.gCost = 0;
-        fromNode.hCost = this.calculateHeuristic(fromNode, toNode);
-        fromNode.fCost = fromNode.gCost + fromNode.hCost;
-        
-        let iterations = 0;
-        const maxIterations = this.gridWidth * this.gridHeight; // Prevent infinite loops
-        
-        while (openSet.length > 0 && iterations < maxIterations && this.isRunning && !this.isPaused) {
-            iterations++;
-            
-            openSet.sort((a, b) => a.fCost - b.fCost);
-            const current = openSet.shift();
-            
-            current.isVisited = true;
-            this.visitedNodes.push(current);
-            closedSet.push(current);
-            
-            // Periodic visualization update
-            if (iterations % 10 === 0) {
-                this.render();
-                await this.sleep(this.animationSpeed / 4);
-            }
-            
-            if (current === toNode) {
-                console.log(`HPA*: Detailed path segment found in ${iterations} iterations`);
-                // Reconstruct this segment
-                let node = current;
-                const segmentPath = [];
-                let pathLength = 0;
-                const maxPathLength = this.gridWidth * this.gridHeight; // Prevent infinite reconstruction
-                
-                while (node && node !== fromNode && pathLength < maxPathLength) {
-                    node.isPath = true;
-                    this.pathNodes.push(node);
-                    segmentPath.unshift(node);
-                    node = node.parent;
-                    pathLength++;
-                }
-                
-                console.log(`HPA*: Segment path length: ${segmentPath.length}`);
-                
-                // Render after each segment is found
-                this.render();
-                await this.sleep(this.animationSpeed);
-                
-                return;
-            }
-            
-            const neighbors = this.getNeighbors(current);
-            for (const neighbor of neighbors) {
-                if (neighbor.isObstacle || closedSet.includes(neighbor)) continue;
-                
-                const tentativeG = current.gCost + this.calculateDistance(current, neighbor);
-                
-                if (tentativeG < neighbor.gCost) {
-                    neighbor.parent = current;
-                    neighbor.gCost = tentativeG;
-                    neighbor.hCost = this.calculateHeuristic(neighbor, toNode);
-                    neighbor.fCost = neighbor.gCost + neighbor.hCost;
-                    
-                    if (!openSet.includes(neighbor)) {
-                        openSet.push(neighbor);
-                    }
-                }
-            }
-            
-            // Periodic visualization update
-            if (iterations % 20 === 0) {
-                await this.sleep(this.animationSpeed / 8);
-            }
-        }
-        
-        if (iterations >= maxIterations) {
-            console.log(`HPA*: Maximum iterations reached for detailed path from (${from.x}, ${from.y}) to (${to.x}, ${to.y})`);
-        } else {
-            console.log(`HPA*: No detailed path found from (${from.x}, ${from.y}) to (${to.x}, ${to.y})`);
-        }
-    }
-    
     async runAnytimeAStar() {
         console.log('Starting Anytime A* (Interruptible) algorithm...');
         this.clearVisualization();
@@ -3189,12 +2612,49 @@ class PathfindingVisualizer {
             
             if (!abstractPath) {
                 console.error('PRA*: No abstract path found');
+                this.pathLength = 0;
                 return;
             }
             
             console.log(`PRA*: Found abstract path with ${abstractPath.length} clusters`);
             
-            // Phase 2: Partial refinement - only refine clusters containing the path
+            // Phase 2: Ensure actual start is part of the path
+            console.log('PRA*: Ensuring start node is included in path...');
+            const actualStartNode = this.grid[this.startNode.y][this.startNode.x];
+            
+            // Always mark the actual start node as part of the path
+            if (!actualStartNode.isPath) {
+                actualStartNode.isPath = true;
+                this.pathNodes.push(actualStartNode);
+                console.log(`PRA*: Marked actual start (${actualStartNode.x}, ${actualStartNode.y}) as path`);
+            }
+            
+            // Phase 3: Connect start to first cluster if needed
+            if (abstractPath.length > 0) {
+                const firstCluster = abstractPath[0];
+                
+                // Find best entrance point in first cluster for the start connection
+                const firstClusterCenterX = Math.max(0, Math.min(firstCluster.x * clusterSize + Math.floor(clusterSize / 2), this.gridWidth - 1));
+                const firstClusterCenterY = Math.max(0, Math.min(firstCluster.y * clusterSize + Math.floor(clusterSize / 2), this.gridHeight - 1));
+                const firstClusterCenter = this.grid[firstClusterCenterY][firstClusterCenterX];
+                
+                console.log(`PRA*: Start at (${actualStartNode.x}, ${actualStartNode.y}), First cluster center at (${firstClusterCenter.x}, ${firstClusterCenter.y})`);
+                
+                // Connect if start is not at the cluster center
+                if (actualStartNode.x !== firstClusterCenter.x || actualStartNode.y !== firstClusterCenter.y) {
+                    console.log(`PRA*: Connecting start to first cluster center`);
+                    await this.findRefinedPath(actualStartNode, firstClusterCenter);
+                } else {
+                    console.log('PRA*: Start already at cluster center, marking cluster center as path');
+                    // Ensure cluster center is marked as path if start is already there
+                    if (!firstClusterCenter.isPath) {
+                        firstClusterCenter.isPath = true;
+                        this.pathNodes.push(firstClusterCenter);
+                    }
+                }
+            }
+            
+            // Phase 3: Partial refinement - only refine clusters containing the path
             console.log('PRA*: Performing partial refinement...');
             let totalRefinements = 0;
             
@@ -3211,11 +2671,60 @@ class PathfindingVisualizer {
                     totalRefinements++;
                 }
                 
-                // Allow UI updates
+                // Allow UI updates and update metrics
+                this.updateRealTimeMetrics();
                 await this.sleep(10);
             }
             
+            // Phase 5: Connect last cluster to actual goal and ensure goal is part of path
+            console.log('PRA*: Connecting path to actual goal...');
+            if (abstractPath.length > 0) {
+                const lastCluster = abstractPath[abstractPath.length - 1];
+                
+                // Find best exit point in last cluster for the goal connection
+                const lastClusterCenterX = Math.max(0, Math.min(lastCluster.x * clusterSize + Math.floor(clusterSize / 2), this.gridWidth - 1));
+                const lastClusterCenterY = Math.max(0, Math.min(lastCluster.y * clusterSize + Math.floor(clusterSize / 2), this.gridHeight - 1));
+                const lastClusterCenter = this.grid[lastClusterCenterY][lastClusterCenterX];
+                
+                const actualGoalNode = this.grid[this.goalNode.y][this.goalNode.x];
+                
+                console.log(`PRA*: Last cluster center at (${lastClusterCenter.x}, ${lastClusterCenter.y}), Goal at (${actualGoalNode.x}, ${actualGoalNode.y})`);
+                
+                // Connect if goal is not at the cluster center
+                if (lastClusterCenter.x !== actualGoalNode.x || lastClusterCenter.y !== actualGoalNode.y) {
+                    console.log(`PRA*: Connecting last cluster center to goal`);
+                    await this.findRefinedPath(lastClusterCenter, actualGoalNode);
+                } else {
+                    console.log('PRA*: Goal already at cluster center, marking cluster center as path');
+                    // Ensure cluster center is marked as path if goal is already there
+                    if (!lastClusterCenter.isPath) {
+                        lastClusterCenter.isPath = true;
+                        this.pathNodes.push(lastClusterCenter);
+                    }
+                }
+            }
+            
+            // Phase 6: Ensure actual goal is part of the path
+            console.log('PRA*: Ensuring goal node is included in path...');
+            const actualGoalNode = this.grid[this.goalNode.y][this.goalNode.x];
+            
+            // Always mark the actual goal node as part of the path
+            if (!actualGoalNode.isPath) {
+                actualGoalNode.isPath = true;
+                this.pathNodes.push(actualGoalNode);
+                console.log(`PRA*: Marked actual goal (${actualGoalNode.x}, ${actualGoalNode.y}) as path`);
+            }
+            
             console.log(`PRA*: Path found with ${totalRefinements} cluster refinements!`);
+            
+            // Calculate path length and update metrics
+            if (this.pathNodes.length > 0) {
+                this.pathLength = this.calculatePathLength(this.pathNodes);
+                console.log(`PRA*: Path length: ${this.pathLength.toFixed(2)} with ${this.pathNodes.length} nodes`);
+            } else {
+                this.pathLength = 0;
+                console.log('PRA*: No path nodes found - marking as failed');
+            }
             
             // Final render to show the complete path
             console.log('PRA*: Rendering final result...');
@@ -3224,6 +2733,7 @@ class PathfindingVisualizer {
         } catch (error) {
             console.error('PRA*: Error during algorithm execution:', error);
             console.error('Stack trace:', error.stack);
+            this.pathLength = 0; // Ensure failure is tracked
         }
     }
     
@@ -3290,11 +2800,15 @@ class PathfindingVisualizer {
             // Debug logging every 100 iterations to detect stuck states
             if (iterations % 100 === 0) {
                 console.log(`PRA*: Abstract search iteration ${iterations}, openSet size: ${openSet.length}`);
+                this.updateRealTimeMetrics();
             }
             
             openSet.sort((a, b) => a.fCost - b.fCost);
             const current = openSet.shift();
             closedSet.push(current);
+            
+            // Track expanded nodes for metrics (abstract level)
+            this.visitedNodes.push({ x: current.x, y: current.y, isAbstract: true });
             
             if (current.x === goalCluster.x && current.y === goalCluster.y) {
                 console.log(`PRA*: Abstract path found in ${iterations} iterations`);
@@ -3334,6 +2848,8 @@ class PathfindingVisualizer {
                     neighbor.fCost = neighbor.gCost + neighbor.hCost;
                     neighbor.parent = current;
                     openSet.push(neighbor);
+                    // Track abstract nodes as open for metrics
+                    this.openNodes.push({ x: neighbor.x, y: neighbor.y, isAbstract: true });
                 } else if (tentativeG < existing.gCost) {
                     existing.gCost = tentativeG;
                     existing.fCost = existing.gCost + existing.hCost;
@@ -3409,11 +2925,11 @@ class PathfindingVisualizer {
         const goalX = toCluster.x * clusterSize + Math.floor(clusterSize / 2);
         const goalY = toCluster.y * clusterSize + Math.floor(clusterSize / 2);
         
-        // Clamp to grid bounds
-        const clampedStartX = Math.min(startX, this.gridWidth - 1);
-        const clampedStartY = Math.min(startY, this.gridHeight - 1);
-        const clampedGoalX = Math.min(goalX, this.gridWidth - 1);
-        const clampedGoalY = Math.min(goalY, this.gridHeight - 1);
+        // Clamp to grid bounds (both lower and upper bounds)
+        const clampedStartX = Math.max(0, Math.min(startX, this.gridWidth - 1));
+        const clampedStartY = Math.max(0, Math.min(startY, this.gridHeight - 1));
+        const clampedGoalX = Math.max(0, Math.min(goalX, this.gridWidth - 1));
+        const clampedGoalY = Math.max(0, Math.min(goalY, this.gridHeight - 1));
         
         const refinedStart = this.grid[clampedStartY][clampedStartX];
         const refinedGoal = this.grid[clampedGoalY][clampedGoalX];
@@ -3482,6 +2998,7 @@ class PathfindingVisualizer {
             // Periodic visualization update for PRA*
             if (iterations % 10 === 0) {
                 this.render();
+                this.updateRealTimeMetrics();
                 await this.sleep(this.animationSpeed / 4);
             }
             
@@ -3494,12 +3011,22 @@ class PathfindingVisualizer {
                 while (node && pathLength < maxPathLength) {
                     // CRITICAL: Never mark obstacles as path nodes!
                     if (!node.isObstacle) {
-                        node.isPath = true;
-                        this.pathNodes.push(node);
+                        // Only mark as path if not already marked (avoid duplicates)
+                        if (!node.isPath) {
+                            node.isPath = true;
+                            this.pathNodes.push(node);
+                        }
                     } else {
                         console.error(`PRA*: ERROR - Trying to mark obstacle at (${node.x}, ${node.y}) as path!`);
                         break; // Stop path reconstruction if we hit an obstacle
                     }
+                    
+                    // Stop when we reach the start node (include it in the path)
+                    if (node === startNode) {
+                        console.log(`PRA*: Reached start node (${node.x}, ${node.y}) in path reconstruction`);
+                        break;
+                    }
+                    
                     node = node.parent;
                     pathLength++;
                 }
@@ -3531,6 +3058,7 @@ class PathfindingVisualizer {
                     
                     if (!openSet.includes(neighbor)) {
                         openSet.push(neighbor);
+                        this.openNodes.push(neighbor);
                     }
                 }
             }
@@ -3561,10 +3089,20 @@ class PathfindingVisualizer {
             const clusterSize = Math.max(4, Math.floor(Math.min(this.gridWidth, this.gridHeight) / 5));
             console.log(`HAA*: Using cluster size ${clusterSize}x${clusterSize}`);
             
-            // Simulate different unit types with terrain restrictions
+            // Cycle through unit types to demonstrate different capabilities
             const unitTypes = ['ground', 'flying', 'amphibious'];
-            const currentUnitType = unitTypes[Math.floor(Math.random() * unitTypes.length)];
+            if (!this.haaUnitTypeIndex) this.haaUnitTypeIndex = 0;
+            const currentUnitType = unitTypes[this.haaUnitTypeIndex % unitTypes.length];
+            this.haaUnitTypeIndex++;
+            
             console.log(`HAA*: Pathfinding for ${currentUnitType} unit`);
+            if (currentUnitType === 'flying') {
+                console.log('HAA*: Flying unit can pass through obstacles (walls will show yellow X pattern)');
+            } else if (currentUnitType === 'amphibious') {
+                console.log('HAA*: Amphibious unit can cross obstacles at higher cost');
+            } else {
+                console.log('HAA*: Ground unit cannot pass through obstacles');
+            }
             
             // Create annotated clusters with terrain capabilities
             console.log('HAA*: Creating annotated clusters...');
@@ -3582,9 +3120,31 @@ class PathfindingVisualizer {
             
             console.log(`HAA*: Found annotated path with ${annotatedPath.length} waypoints`);
             
+            // Connect actual start to first waypoint
+            console.log('HAA*: Connecting actual start to path...');
+            if (annotatedPath.length > 0) {
+                const startNode = this.grid[this.startNode.y][this.startNode.x];
+                const firstWaypoint = annotatedPath[0];
+                if (startNode.x !== firstWaypoint.x || startNode.y !== firstWaypoint.y) {
+                    console.log(`HAA*: Connecting start (${startNode.x}, ${startNode.y}) to first waypoint (${firstWaypoint.x}, ${firstWaypoint.y})`);
+                    await this.findCapabilityConstrainedPath(startNode, firstWaypoint, currentUnitType);
+                }
+            }
+            
             // Refine path with capability constraints
             console.log('HAA*: Refining path with terrain capabilities...');
             await this.refineAnnotatedPath(annotatedPath, clusterSize, currentUnitType);
+            
+            // Connect last waypoint to actual goal
+            console.log('HAA*: Connecting path to actual goal...');
+            if (annotatedPath.length > 0) {
+                const goalNode = this.grid[this.goalNode.y][this.goalNode.x];
+                const lastWaypoint = annotatedPath[annotatedPath.length - 1];
+                if (lastWaypoint.x !== goalNode.x || lastWaypoint.y !== goalNode.y) {
+                    console.log(`HAA*: Connecting last waypoint (${lastWaypoint.x}, ${lastWaypoint.y}) to goal (${goalNode.x}, ${goalNode.y})`);
+                    await this.findCapabilityConstrainedPath(lastWaypoint, goalNode, currentUnitType);
+                }
+            }
             
             console.log(`HAA*: Hierarchical annotated path found for ${currentUnitType} unit!`);
             
@@ -4522,23 +4082,36 @@ class PathfindingVisualizer {
                 const cellX = x * this.cellSize;
                 const cellY = y * this.cellSize;
                 
-                // Cell background
-                if (node.isPath) {
+                // Cell background - prioritize obstacles to show walls even with paths
+                if (node.isObstacle) {
+                    this.ctx.fillStyle = '#2d3748';
+                } else if (node.isPath) {
                     this.ctx.fillStyle = '#7c3aed'; // Darker purple for better visibility
                 } else if (node.isVisited) {
                     this.ctx.fillStyle = '#bee3f8';
                 } else if (node.isOpen) {
                     this.ctx.fillStyle = '#fbb6ce';
-                } else if (node.isObstacle) {
-                    this.ctx.fillStyle = '#2d3748';
                 } else {
                     this.ctx.fillStyle = 'white';
                 }
                 
                 this.ctx.fillRect(cellX + 1, cellY + 1, this.cellSize - 2, this.cellSize - 2);
                 
-                // Add border for path cells
-                if (node.isPath) {
+                // Add special indicator for paths through obstacles (flying units)
+                if (node.isPath && node.isObstacle) {
+                    // Draw a diagonal pattern to show path through obstacle
+                    this.ctx.strokeStyle = '#fbbf24'; // Yellow for flying through walls
+                    this.ctx.lineWidth = 3;
+                    this.ctx.beginPath();
+                    this.ctx.moveTo(cellX + 3, cellY + 3);
+                    this.ctx.lineTo(cellX + this.cellSize - 3, cellY + this.cellSize - 3);
+                    this.ctx.moveTo(cellX + this.cellSize - 3, cellY + 3);
+                    this.ctx.lineTo(cellX + 3, cellY + this.cellSize - 3);
+                    this.ctx.stroke();
+                }
+                
+                // Add border for path cells (only for non-obstacle paths)
+                if (node.isPath && !node.isObstacle) {
                     this.ctx.strokeStyle = '#5b21b6'; // Darker purple border
                     this.ctx.lineWidth = 2;
                     this.ctx.strokeRect(cellX + 1, cellY + 1, this.cellSize - 2, this.cellSize - 2);
@@ -4735,96 +4308,241 @@ class PathfindingVisualizer {
             parent.style.display = 'block';
             chartDiv.innerHTML = '<p>Running comparison...</p>';
             
-            // Scroll to comparison section
-            parent.scrollIntoView({ behavior: 'smooth' });
+            // Store parent for later scrolling after completion
+            this.comparisonParent = parent;
         }
         
         await this.runComparison();
     }
     
     async runComparison() {
-        const algorithms = ['astar', 'weighted_astar', 'dijkstra', 'theta_star', 'jps'];
+        // Include all major algorithms for comprehensive comparison (excluding hierarchical)
+        const algorithms = [
+            'astar', 'weighted_astar', 'dijkstra', 'bfs', 'dfs',
+            'theta_star', 'jps', 'ida_star', 'rrt', 'lpa_star',
+            'd_star_lite', 'field_d_star', 'mtd_star_lite', 'anytime_d_star',
+            'gaa_star', 'incremental_phi_star', 'anytime_a_star'
+        ];
         const results = [];
         
-        for (const algorithm of algorithms) {
-            // Save current state
-            const originalAlgorithm = this.currentAlgorithm;
-            this.currentAlgorithm = algorithm;
+        // Store original state
+        const originalAlgorithm = this.currentAlgorithm;
+        const originalSpeed = this.animationSpeed;
+        this.animationSpeed = 0; // Run without visualization for speed
+        
+        console.log('Starting comprehensive algorithm comparison...');
+        
+        for (let i = 0; i < algorithms.length; i++) {
+            const algorithm = algorithms[i];
+            console.log(`Testing ${algorithm} (${i + 1}/${algorithms.length})...`);
             
-            // Run algorithm without visualization
-            const originalSpeed = this.animationSpeed;
-            this.animationSpeed = 0;
+            // Update algorithm info in real-time
+            this.currentAlgorithm = algorithm;
+            this.updateAlgorithmInfo();
+            
+            // Update progress
+            const chartDiv = document.getElementById('comparison-chart');
+            if (chartDiv) {
+                chartDiv.innerHTML = `
+                    <div class="comparison-progress">
+                        <h4>Running Comprehensive Comparison</h4>
+                        <p>Currently testing: <strong>${this.algorithmConfigs[algorithm]?.name || algorithm.toUpperCase()}</strong></p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${((i + 1) / algorithms.length * 100)}%"></div>
+                        </div>
+                        <p>${i + 1} of ${algorithms.length} algorithms complete</p>
+                    </div>
+                `;
+            }
             
             this.clearVisualization();
+            
             const startTime = performance.now();
+            let success = false;
+            let errorMessage = null;
+            let memoryUsage = 0;
             
             try {
+                // Calculate memory usage (approximate)
+                const beforeMemory = this.visitedNodes.length + this.openNodes.length + this.pathNodes.length;
+                
                 await this.runAlgorithm();
                 const endTime = performance.now();
+                success = this.pathNodes.length > 0;
+                
+                // Calculate final memory usage
+                memoryUsage = this.visitedNodes.length + this.openNodes.length + this.pathNodes.length - beforeMemory;
+                
+                // Update performance metrics in real-time
+                this.updatePerformanceMetrics({
+                    executionTime: (endTime - startTime).toFixed(2),
+                    pathLength: this.pathLength || 0,
+                    nodesExpanded: this.nodesExpanded || this.visitedNodes.length,
+                    nodesVisited: this.visitedNodes.length,
+                    memoryUsage: Math.max(memoryUsage, this.visitedNodes.length),
+                    successRate: success ? '100%' : '0%'
+                });
                 
                 results.push({
-                    name: this.algorithmConfigs[algorithm].name,
+                    algorithm: algorithm,
+                    name: this.algorithmConfigs[algorithm]?.name || algorithm.toUpperCase(),
                     time: (endTime - startTime).toFixed(2),
                     nodesVisited: this.visitedNodes.length,
-                    pathLength: this.pathLength,
-                    optimal: ['astar', 'dijkstra', 'theta_star'].includes(algorithm)
+                    nodesExpanded: this.nodesExpanded || this.visitedNodes.length,
+                    pathLength: this.pathLength || 0,
+                    memoryUsage: Math.max(memoryUsage, this.visitedNodes.length),
+                    success: success,
+                    optimal: this.isOptimalAlgorithm(algorithm),
+                    category: this.getAlgorithmCategory(algorithm),
+                    score: this.calculatePerformanceScore(endTime - startTime, this.visitedNodes.length, this.pathLength || 0, success)
                 });
             } catch (error) {
-                results.push({
-                    name: this.algorithmConfigs[algorithm].name,
-                    time: 'N/A',
-                    nodesVisited: 'N/A',
+                errorMessage = error.message;
+                
+                // Update metrics for failed algorithm
+                this.updatePerformanceMetrics({
+                    executionTime: 'Failed',
                     pathLength: 'N/A',
-                    optimal: false
+                    nodesExpanded: 'N/A',
+                    nodesVisited: 'N/A',
+                    memoryUsage: 'N/A',
+                    successRate: '0%'
+                });
+                
+                results.push({
+                    algorithm: algorithm,
+                    name: this.algorithmConfigs[algorithm]?.name || algorithm.toUpperCase(),
+                    time: 'Failed',
+                    nodesVisited: 0,
+                    nodesExpanded: 0,
+                    pathLength: 0,
+                    memoryUsage: 0,
+                    success: false,
+                    optimal: false,
+                    category: this.getAlgorithmCategory(algorithm),
+                    error: errorMessage,
+                    score: 10000 // High score for failed algorithms
                 });
             }
             
-            // Restore settings
-            this.animationSpeed = originalSpeed;
-            this.currentAlgorithm = originalAlgorithm;
+            // Small delay to show each result
+            await this.sleep(500);
         }
         
-        this.displayComparisonResults(results);
+        // Restore original state
+        this.animationSpeed = originalSpeed;
+        this.currentAlgorithm = originalAlgorithm;
+        this.clearVisualization();
+        this.updateAlgorithmInfo(); // Reset info panel to original algorithm
+        
+        console.log('Algorithm comparison complete!');
+        
+        // Sort results by performance (best first)
+        const sortedResults = this.sortResultsByPerformance(results);
+        
+        this.displayComparisonResults(sortedResults);
+        
+        // Scroll to results after all comparisons are done
+        if (this.comparisonParent) {
+            this.comparisonParent.scrollIntoView({ behavior: 'smooth' });
+        }
     }
     
     displayComparisonResults(results) {
         const chartDiv = document.getElementById('comparison-chart');
         if (!chartDiv) return;
         
-        // Create comparison results HTML
+        // Results are already sorted by performance from sortResultsByPerformance()
+        const successfulResults = results.filter(r => r.success);
+        const failedCount = results.length - successfulResults.length;
+        
+        // Create comprehensive comparison results HTML
         const html = `
-            <h3>Algorithm Comparison Results</h3>
+            <div class="comparison-overview">
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-label">Tested:</span>
+                        <span class="stat-value">${results.length} algorithms</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Successful:</span>
+                        <span class="stat-value">${successfulResults.length}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Failed:</span>
+                        <span class="stat-value">${failedCount}</span>
+                    </div>
+                </div>
+            </div>
+            
             <div class="comparison-results-inline">
                 <table class="comparison-table">
                     <thead>
                         <tr>
+                            <th>Rank</th>
                             <th>Algorithm</th>
+                            <th>Category</th>
+                            <th>Status</th>
                             <th>Time (ms)</th>
                             <th>Nodes Visited</th>
+                            <th>Nodes Expanded</th>
                             <th>Path Length</th>
-                            <th>Optimal</th>
+                            <th>Memory</th>
+                            <th>Score</th>
                         </tr>
                     </thead>
                     <tbody>
-                        ${results.map(result => `
-                            <tr>
-                                <td><strong>${result.name}</strong></td>
-                                <td>${result.time}ms</td>
+                        ${results.map((result, index) => `
+                            <tr class="${result.success ? 'success' : 'failed'}">
+                                <td>
+                                    ${result.success ? 
+                                        (index < 3 ? `<span class="rank-badge rank-${index + 1}">#${index + 1}</span>` : `<span class="rank-badge">#${index + 1}</span>`) : 
+                                        '<span class="rank-failed">-</span>'
+                                    }
+                                </td>
+                                <td>
+                                    <strong>${result.name}</strong>
+                                    ${result.optimal ? '<span class="optimal-badge">★</span>' : ''}
+                                </td>
+                                <td><span class="category-badge ${result.category.toLowerCase().replace('-', '')}">${result.category}</span></td>
+                                <td>
+                                    ${result.success ? 
+                                        '<span class="status-success">✓ Success</span>' : 
+                                        `<span class="status-failed">✗ Failed</span>`
+                                    }
+                                </td>
+                                <td>${result.time === 'Failed' ? 'N/A' : result.time + 'ms'}</td>
                                 <td>${result.nodesVisited}</td>
-                                <td>${result.pathLength}</td>
-                                <td>${result.optimal ? 'Yes' : 'No'}</td>
+                                <td>${result.nodesExpanded}</td>
+                                <td>${result.pathLength || 'N/A'}</td>
+                                <td>${result.memoryUsage || 'N/A'}</td>
+                                <td>${result.success ? result.score.toFixed(1) : 'N/A'}</td>
                             </tr>
                         `).join('')}
                     </tbody>
                 </table>
                 
-                <div class="comparison-summary">
-                    <h4>Performance Summary</h4>
-                    <ul>
-                        <li><strong>Fastest:</strong> ${this.getFastest(results)}</li>
-                        <li><strong>Most Efficient:</strong> ${this.getMostEfficient(results)}</li>
-                        <li><strong>Shortest Path:</strong> ${this.getShortestPath(results)}</li>
-                    </ul>
+                <div class="comparison-analysis">
+                    <div class="analysis-section">
+                        <h4>🏆 Performance Leaders</h4>
+                        <ul>
+                            <li><strong>🥇 Overall Winner:</strong> ${successfulResults.length > 0 ? successfulResults[0].name : 'N/A'}</li>
+                            <li><strong>⚡ Fastest Execution:</strong> ${this.getFastest(successfulResults)}</li>
+                            <li><strong>🧠 Most Memory Efficient:</strong> ${this.getMostEfficient(successfulResults)}</li>
+                            <li><strong>🎯 Shortest Path:</strong> ${this.getShortestPath(successfulResults)}</li>
+                            <li><strong>⭐ Most Optimal:</strong> ${this.getMostOptimal(successfulResults)}</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <h4>📊 Category Performance</h4>
+                        ${this.generateCategoryAnalysis(successfulResults)}
+                    </div>
+                    
+                    <div class="analysis-section">
+                        <h4>💡 Recommendations</h4>
+                        ${this.generateRecommendations(successfulResults)}
+                    </div>
                 </div>
             </div>
         `;
@@ -4833,21 +4551,146 @@ class PathfindingVisualizer {
     }
     
     getFastest(results) {
-        const valid = results.filter(r => r.time !== 'N/A');
+        const valid = results.filter(r => r.time !== 'N/A' && r.time !== 'Failed' && r.success);
         if (valid.length === 0) return 'N/A';
         return valid.reduce((min, r) => parseFloat(r.time) < parseFloat(min.time) ? r : min).name;
     }
     
     getMostEfficient(results) {
-        const valid = results.filter(r => r.nodesVisited !== 'N/A');
+        const valid = results.filter(r => r.nodesVisited !== 'N/A' && r.success);
         if (valid.length === 0) return 'N/A';
         return valid.reduce((min, r) => r.nodesVisited < min.nodesVisited ? r : min).name;
     }
     
     getShortestPath(results) {
-        const valid = results.filter(r => r.pathLength !== 'N/A');
+        const valid = results.filter(r => r.pathLength !== 'N/A' && r.success);
         if (valid.length === 0) return 'N/A';
         return valid.reduce((min, r) => r.pathLength < min.pathLength ? r : min).name;
+    }
+    
+    calculatePerformanceScore(time, nodesVisited, pathLength, success) {
+        if (!success) return 10000; // Penalize failed algorithms heavily
+        
+        // Lower score is better (normalize and weight different factors)
+        const timeScore = parseFloat(time) || 1000;
+        const nodeScore = nodesVisited || 1000;
+        const pathScore = pathLength || 100;
+        
+        // Weighted scoring: 30% time, 40% nodes, 30% path length
+        return (timeScore * 0.3) + (nodeScore * 0.4) + (pathScore * 0.3);
+    }
+    
+    sortResultsByPerformance(results) {
+        return results.sort((a, b) => {
+            // First prioritize successful algorithms
+            if (a.success !== b.success) {
+                return b.success - a.success; // Success first
+            }
+            
+            // Then sort by performance score (lower is better)
+            if (a.success && b.success) {
+                return a.score - b.score;
+            }
+            
+            // For failed algorithms, sort alphabetically
+            return a.name.localeCompare(b.name);
+        });
+    }
+    
+    isOptimalAlgorithm(algorithm) {
+        const optimalAlgorithms = [
+            'astar', 'dijkstra', 'theta_star', 'ida_star', 'lpa_star',
+            'd_star_lite', 'field_d_star', 'mtd_star_lite', 'gaa_star', 'incremental_phi_star'
+        ];
+        return optimalAlgorithms.includes(algorithm);
+    }
+    
+    getAlgorithmCategory(algorithm) {
+        const categories = {
+            'astar': 'Classic',
+            'weighted_astar': 'Classic',
+            'dijkstra': 'Classic',
+            'bfs': 'Classic',
+            'dfs': 'Classic',
+            'theta_star': 'Any-Angle',
+            'incremental_phi_star': 'Any-Angle',
+            'jps': 'Optimized',
+            'ida_star': 'Memory-Efficient',
+            'rrt': 'Sampling',
+            'lpa_star': 'Dynamic',
+            'd_star_lite': 'Dynamic',
+            'field_d_star': 'Dynamic',
+            'mtd_star_lite': 'Dynamic',
+            'anytime_d_star': 'Dynamic',
+            'gaa_star': 'Adaptive',
+            'anytime_a_star': 'Anytime'
+        };
+        return categories[algorithm] || 'Other';
+    }
+    
+    getBestOverall(results) {
+        if (results.length === 0) return 'N/A';
+        
+        // Score based on multiple factors (lower is better)
+        const scored = results.map(r => ({
+            ...r,
+            score: (parseFloat(r.time) || 1000) * 0.3 + 
+                   (r.nodesVisited || 1000) * 0.4 + 
+                   (r.pathLength || 100) * 0.3
+        }));
+        
+        return scored.reduce((best, r) => r.score < best.score ? r : best).name;
+    }
+    
+    generateCategoryAnalysis(results) {
+        const categories = {};
+        results.forEach(r => {
+            if (!categories[r.category]) {
+                categories[r.category] = { count: 0, avgTime: 0, avgNodes: 0 };
+            }
+            categories[r.category].count++;
+            categories[r.category].avgTime += parseFloat(r.time) || 0;
+            categories[r.category].avgNodes += r.nodesVisited || 0;
+        });
+        
+        let html = '<ul>';
+        Object.keys(categories).forEach(cat => {
+            const data = categories[cat];
+            const avgTime = (data.avgTime / data.count).toFixed(1);
+            const avgNodes = Math.round(data.avgNodes / data.count);
+            html += `<li><strong>${cat}:</strong> ${data.count} algorithms, average ${avgTime}ms, average ${avgNodes} nodes</li>`;
+        });
+        html += '</ul>';
+        
+        return html;
+    }
+    
+    getMostOptimal(results) {
+        const optimalResults = results.filter(r => r.optimal && r.success);
+        if (optimalResults.length === 0) return 'N/A';
+        return optimalResults[0].name; // First in sorted list
+    }
+    
+    generateRecommendations(results) {
+        if (results.length === 0) {
+            return '<p>No successful algorithms to analyze.</p>';
+        }
+        
+        const winner = results.length > 0 ? results[0].name : 'N/A';
+        const fastest = this.getFastest(results);
+        const mostEfficient = this.getMostEfficient(results);
+        const shortestPath = this.getShortestPath(results);
+        
+        return `
+            <ul>
+                <li><strong>🏆 Top Performer:</strong> ${winner} - Best overall balance of all metrics</li>
+                <li><strong>⚡ For Speed:</strong> ${fastest} - Fastest execution time</li>
+                <li><strong>🧠 For Memory:</strong> ${mostEfficient} - Lowest memory footprint</li>
+                <li><strong>🎯 For Accuracy:</strong> ${shortestPath} - Guarantees optimal paths</li>
+                <li><strong>📱 Real-time Apps:</strong> Consider top 3 performers for responsive UIs</li>
+                <li><strong>🗺️ Large Maps:</strong> Hierarchical algorithms (HPA*, PRA*, HAA*) scale better</li>
+            </ul>
+        `;
     }
     
     closeModal() {

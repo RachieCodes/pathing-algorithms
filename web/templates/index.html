@@ -46,13 +46,6 @@
                         <option value="anytime_d_star">Anytime D* (Bounded Suboptimal)</option>
                     </optgroup>
                     
-                    <!-- Hierarchical Algorithms -->
-                    <optgroup label="Hierarchical Algorithms">
-                        <option value="hpa_star">HPA* (Hierarchical Path-Finding)</option>
-                        <option value="pra_star">PRA* (Partial Refinement)</option>
-                        <option value="haa_star">HAA* (Hierarchical Annotated)</option>
-                    </optgroup>
-                    
                     <!-- Other Advanced -->
                     <optgroup label="Other Advanced">
                         <option value="incremental_phi_star">Incremental Phi*</option>
@@ -206,10 +199,15 @@
                     </div>
                 </div>
 
-                <!-- Comparison Chart -->
-                <div class="comparison-chart">
-                    <h3>Algorithm Comparison</h3>
-                    <canvas id="comparison-chart" width="400" height="250"></canvas>
+            </div>
+        </div>
+
+        <!-- Full-Width Comparison Section -->
+        <div class="comparison-section">
+            <div class="comparison-chart">
+                <h3>Algorithm Comparison</h3>
+                <div id="comparison-chart" class="comparison-results-container">
+                    <p>Click "Compare All" to run comprehensive algorithm analysis</p>
                 </div>
             </div>
         </div>
@@ -238,9 +236,6 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="comparison-charts">
-                        <canvas id="performance-chart" width="600" height="300"></canvas>
-                    </div>
                 </div>
             </div>
         </div>
@@ -257,15 +252,24 @@
                 <li><strong>Compare Algorithms:</strong> Use "Compare All" to see performance differences</li>
             </ol>
             
-            <div class="tips">
-                <h4>Tips</h4>
-                <ul>
-                    <li><strong>A*</strong> is great for general-purpose pathfinding</li>
-                    <li><strong>Jump Point Search</strong> is much faster on open grids</li>
-                    <li><strong>Theta*</strong> produces smoother, more natural paths</li>
-                    <li><strong>Weighted A*</strong> trades optimality for speed</li>
-                    <li><strong>RRT</strong> excels in complex obstacle environments</li>
-                </ul>
+            <div class="faqs">
+                <h4>Frequently Asked Questions</h4>
+                <div class="faq-item">
+                    <h5>Q: Which algorithm should I use for my project?</h5>
+                    <p><strong>A*</strong> is the best general-purpose choice. For speed on open grids, use <strong>Jump Point Search</strong>. For smooth paths, choose <strong>Theta*</strong>.</p>
+                </div>
+                <div class="faq-item">
+                    <h5>Q: What's the difference between optimal and fast algorithms?</h5>
+                    <p>Optimal algorithms like <strong>A*</strong> guarantee the shortest path. Fast algorithms like <strong>Weighted A*</strong> find good paths quickly but may not be optimal.</p>
+                </div>
+                <div class="faq-item">
+                    <h5>Q: When should I use sampling-based algorithms?</h5>
+                    <p><strong>RRT</strong> and similar algorithms excel in high-dimensional spaces or when dealing with complex obstacle configurations where grid-based methods struggle.</p>
+                </div>
+                <div class="faq-item">
+                    <h5>Q: Why do some algorithms fail to find a path?</h5>
+                    <p>Some algorithms have limitations with certain grid configurations or may timeout on complex problems. The comparison shows success rates for each algorithm.</p>
+                </div>
             </div>
         </div>
     </div>
